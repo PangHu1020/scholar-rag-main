@@ -5,6 +5,10 @@ import uuid
 import re
 from typing import Optional, Any
 from docling.document_converter import DocumentConverter
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_milvus import Milvus, BM25BuiltInFunction
+from langchain_huggingface import HuggingFaceEmbeddings
 from .models import PaperNode, NodeType
 from .node_generator import NodeContentGeneratorFactory, TableGenerator
 
@@ -305,5 +309,111 @@ class PDFParser:
                             best_caption = other.text
         
         return best_caption
+
+
+class RAGIntegration:
+    """Convert nodes to documents and store in Milvus with hybrid retrieval."""
+    
+    def __init__(
+        self,
+        embedding_model: str = "BAAI/bge-small-en-v1.5",
+        milvus_uri: str = "http://localhost:19530",
+        collection_name: str = "papers"
+    ):
+        self.embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
+        self.milvus_uri = milvus_uri
+        self.collection_name = collection_name
+        self.splitter = RecursiveCharacterTextSplitter(
+            chunk_size=500,
+            chunk_overlap=50,
+            separators=["\n\n", "\n", ".","?", "!", ";", " "]
+        )
+    
+    def nodes_to_documents(self, nodes: list[PaperNode]) -> list[Document]:
+        """Convert PaperNodes to LangChain Documents."""
+        docs = []
+        for node in nodes:
+            if not node.text.strip():
+                continue
+            
+            metadata = {
+                "node_id": node.node_id,
+                "paper_id": node.paper_id,
+                "node_type": node.node_type,
+                "page_num": node.page_num,
+                "order": node.order,
+                "section_path": " > ".join(node.section_path) if node.section_path else "",
+            }
+            if node.bbox:
+                metadata["bbox"] = str(node.bbox)
+            if node.parent_id:
+                metadata["node_parent_id"] = node.parent_id
+            
+            metadata.update({k: v for k, v in node.metadata.items() if k != "item"})
+            
+            docs.append(Document(page_content=node.text, metadata=metadata))
+        return docs
+    
+    def create_chunks(self, docs: list[Document]) -> tuple[list[Document], list[Document]]:
+        """Create parent and child chunks for retrieval."""
+        parents = []
+        children = []
+        
+        no_split_types = {"table", "figure", "section_header", "caption"}
+        
+        for doc in docs:
+            chunk_parent_id = str(uuid.uuid4())
+            doc.metadata["chunk_id"] = chunk_parent_id
+            parents.append(doc)
+            
+            node_type = doc.metadata.get("node_type", "")
+            should_split = node_type not in no_split_types and len(doc.page_content) > 500
+            
+            if should_split:
+                splits = self.splitter.split_documents([doc])
+                for i, split in enumerate(splits):
+                    split.metadata["chunk_parent_id"] = chunk_parent_id
+                    split.metadata["chunk_id"] = f"{chunk_parent_id}_child_{i}"
+                    children.append(split)
+            else:
+                child = Document(
+                    page_content=doc.page_content,
+                    metadata={**doc.metadata, "chunk_parent_id": chunk_parent_id, "chunk_id": f"{chunk_parent_id}_child_0"}
+                )
+                children.append(child)
+        
+        return parents, children
+    
+    def store_in_milvus(self, parents: list[Document], children: list[Document]) -> bool:
+        """Store documents in Milvus with hybrid index (dense + BM25)."""
+        if not parents or not children:
+            return False
+        
+        bm25 = BM25BuiltInFunction(input_field_names="text", output_field_names="sparse")
+        
+        try:
+            Milvus.from_documents(
+                children,
+                self.embeddings,
+                builtin_function=bm25,
+                vector_field=["dense", "sparse"],
+                collection_name=f"{self.collection_name}_children",
+                connection_args={"uri": self.milvus_uri},
+                drop_old=True,
+            )
+            
+            Milvus.from_documents(
+                parents,
+                self.embeddings,
+                builtin_function=bm25,
+                vector_field=["dense", "sparse"],
+                collection_name=f"{self.collection_name}_parents",
+                connection_args={"uri": self.milvus_uri},
+                drop_old=True,
+            )
+            return True
+        except Exception as e:
+            print(f"Error storing in Milvus: {e}")
+            return False
 
 
