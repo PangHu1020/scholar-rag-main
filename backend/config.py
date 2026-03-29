@@ -21,3 +21,8 @@ class Config:
     
     ENABLE_CACHE = os.getenv("ENABLE_CACHE", "true").lower() == "true"
     CACHE_MAX_SIZE = int(os.getenv("CACHE_MAX_SIZE", "1000"))
+    
+    LLM_BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:11434/v1")
+    LLM_MODEL = os.getenv("LLM_MODEL", "qwen3:32b")
+    LLM_API_KEY = os.getenv("LLM_API_KEY", "ollama")
+    MAX_RETRIES = int(os.getenv("MAX_RETRIES", "2"))
