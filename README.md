@@ -17,7 +17,10 @@ Upload academic papers, ask questions in natural language, get grounded answers 
 </div>
 
 ---
-
+<!-- TODO: replace with actual diagram -->
+<p align="center">
+  <img src="doc/logo.png" alt="logo" width="720">
+</p>
 ## What is ScholarRAG?
 
 ScholarRAG is an end-to-end academic paper Q&A system. It parses PDFs with full structural awareness (sections, tables, figures), retrieves relevant passages via hybrid search, and generates cited answers through a multi-agent pipeline -- all accessible through a clean chat interface.
@@ -33,6 +36,11 @@ ScholarRAG is an end-to-end academic paper Q&A system. It parses PDFs with full 
 ---
 
 ## Features
+
+<!-- TODO: replace with actual screenshot or GIF -->
+<p align="center">
+  <img src="doc/demo.gif" alt="Demo" width="800">
+</p>
 
 | Category | Details |
 |---|---|
@@ -174,14 +182,6 @@ python eval/eval_generation.py
 
 ---
 
-## Demo
-
-<!-- TODO: replace with actual screenshot or GIF -->
-<p align="center">
-  <img src="doc/demo.gif" alt="ScholarRAG Demo" width="800">
-</p>
-
----
 
 ## License
 
