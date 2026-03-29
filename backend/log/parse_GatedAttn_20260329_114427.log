@@ -1,0 +1,1472 @@
+Parsing: pdf/GatedAttn.pdf
+================================================================================
+
+✓ Successfully parsed 114 nodes
+
+Node Type Distribution:
+----------------------------------------
+  caption             :   13
+  figure              :   10
+  paragraph           :   60
+  section_header      :   25
+  table               :    6
+
+================================================================================
+Sample Nodes by Type:
+================================================================================
+
+[CAPTION]
+--------------------------------------------------------------------------------
+
+Sample 1:
+  Page: 2, Order: 21
+  Section: 2 Gated-Attention Layer
+  BBox: (70.6, 604.0, 525.5, 545.1)
+  Text (704 chars):
+    Caption: Figure 1: Left : Investigated positions for applying gating operations.; Middle : Performance comparison (Test PPL and MMLU) of 15B MoE models with gating applied at various positions. Gating...
+
+Sample 2:
+  Page: 3, Order: 28
+  Section: 2 Gated-Attention Layer > 2.2 Augmenting Attention Layer with Gating Mechanisms
+  BBox: (70.9, 530.4, 524.4, 471.5)
+  Text (683 chars):
+    Caption: Figure 2: Left : Proportion of attention allocated to the initial token per layer (test perplexity dataset). The baseline model suffers from a significant attention sink, with an average of 4...
+
+[FIGURE]
+--------------------------------------------------------------------------------
+
+Sample 1:
+  Page: 1, Order: 9
+  Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free
+  BBox: (70.8, 820.0, 119.6, 799.6)
+  Text (6 chars):
+    Figure...
+
+Sample 2:
+  Page: 2, Order: 22
+  Section: 2 Gated-Attention Layer
+  BBox: (68.5, 795.3, 523.9, 610.4)
+  Text (712 chars):
+    Figure: Caption: Figure 1: Left : Investigated positions for applying gating operations.; Middle : Performance comparison (Test PPL and MMLU) of 15B MoE models with gating applied at various positions...
+
+[PARAGRAPH]
+--------------------------------------------------------------------------------
+
+Sample 1:
+  Page: 1, Order: 0
+  BBox: (70.4, 88.7, 524.7, 67.7)
+  Text (222 chars):
+    Paragraph: We identify two primary factors contributing to the efficacy of gating: (i) Non-Linearity. The two consecutive linear layers - the value ( W v ) and dense ( W O ) projections - can be rewri...
+
+Sample 2:
+  Page: 1, Order: 1
+  BBox: (70.6, 182.2, 526.2, 96.1)
+  Text (853 chars):
+    Paragraph: In this work, we investigate gating mechanisms in the standard softmax attention (Vaswani, 2017) (Sec.2.2). Specifically, we introduce gating at distinct positions (Fig. 1): after the query...
+
+[SECTION_HEADER]
+--------------------------------------------------------------------------------
+
+Sample 1:
+  Page: 1, Order: 4
+  Section: 1 Introduction
+  BBox: (70.9, 405.2, 157.9, 393.9)
+  Text (23 chars):
+    Section: 1 Introduction...
+
+Sample 2:
+  Page: 1, Order: 8
+  Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free
+  BBox: (73.5, 770.6, 523.5, 741.1)
+  Text (100 chars):
+    Section: Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free...
+
+[TABLE]
+--------------------------------------------------------------------------------
+
+Sample 1:
+  Page: 4, Order: 38
+  Section: 3 Experiments
+  BBox: (71.4, 744.9, 523.1, 502.0)
+  Text (2985 chars):
+    Table: Caption: Table 1: Gating variant performance and results. We train the 15A2B MoE models on 400B tokens. d k is the head dim, d model is the model's hidden dim, and n is the number of tokens. q ...
+
+Sample 2:
+  Page: 5, Order: 46
+  Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+  BBox: (71.6, 742.6, 522.8, 530.6)
+  Text (2645 chars):
+    Table: Caption: Table 2: Performance of different methods with varying learning rates, batch sizes, and model configurations. 'SDPA' refers to the sigmoid gating after SDPA in Eq 3, and 'sandwitch nor...
+
+================================================================================
+ALL NODES (Full Details):
+================================================================================
+
+================================================================================
+Node #0 | Type: paragraph | Page: 1
+================================================================================
+BBox: (70.368, 88.69920864843755, 524.684510108, 67.67840637293318)
+
+Text:
+Paragraph:
+We identify two primary factors contributing to the efficacy of gating: (i) Non-Linearity. The two consecutive linear layers - the value ( W v ) and dense ( W O ) projections - can be rewritten into one low-rank
+
+
+================================================================================
+Node #1 | Type: paragraph | Page: 1
+================================================================================
+BBox: (70.567, 182.2286574484375, 526.1504439359995, 96.11644621843755)
+
+Text:
+Paragraph:
+In this work, we investigate gating mechanisms in the standard softmax attention (Vaswani, 2017) (Sec.2.2). Specifically, we introduce gating at distinct positions (Fig. 1): after the query ( G 4 ), key ( G 3 ), and value projections ( G 2 ); following the Scaled Dot Product Attention (SDPA) outputs ( G 1 ); and after the final dense output layer ( G 5 ). Our exploration covers gating variants including elementwise and headwise, head-specific and head-shared, as well as additive and multiplicative forms. We find that: (i) applying SDPA output head-specific gating ( G 1 ) yields the most significant performance improvements (e.g., up to 0.2 PPL reduction and 2 points on MMLU); (ii) the SDPA output gating also improves training stability, nearly eliminating loss spikes, enabling larger learning rates and enhancing model scalability.
+
+
+================================================================================
+Node #2 | Type: paragraph | Page: 1
+================================================================================
+BBox: (70.448, 286.83665744843756, 525.6576538895998, 189.76444621843757)
+
+Text:
+Paragraph:
+Insufficient understanding hinders assessing gating's true contribution, especially when confounded with other architectural factors. For instance, while Switch Heads (Csordas et al., 2024a;b) introduces a sigmoid gating to select top-K attention head experts, our experiments reveal an interesting finding (Appendix A.1): substantial performance gains persist even when reduced to a single expert, where the gate simply modulates the value output. This strongly suggests the gating itself provides significant intrinsic value, separate from the routing mechanism. Similarly, in Native Sparse Attention (NSA) (Yuan et al., 2025), while overall performance improvements are demonstrated, they do not disentangle the contributions of its gating mechanism from the effects of the sparse attention design itself. These considerations underscore the need to rigorously disentangle the effects of gating from other architectural components.
+
+
+================================================================================
+Node #3 | Type: paragraph | Page: 1
+================================================================================
+BBox: (70.478, 380.48465744843753, 525.6578366359996, 294.3724462184375)
+
+Text:
+Paragraph:
+Gating mechanism is well-established in neural networks. Early architectures, such as LSTMs (Hochreiter & Schmidhuber, 1997), Highway Networks (Srivastava et al., 2015) and GRUs (Dey & Salem, 2017), pioneer the use of gating to control information flow across time steps or layers and improve gradient propagation. This principle persists in modern architectures. Recent sequence modeling works, including state-space models (Gu & Dao, 2023; Dao & Gu, 2024) and attention mechanisms (Hua et al., 2022; Sun et al., 2023; Qin et al., 2024a; Yang et al., 2024b; Lin et al., 2025) commonly apply gating, often to modulate the outputs of token-mixer components. Despite its widespread adoption and empirical success, the function and impact of gating mechanisms remain insufficiently explored beyond their initial intuition.
+
+
+================================================================================
+Node #4 | Type: section_header | Page: 1
+================================================================================
+Section: 1 Introduction
+BBox: (70.866, 405.2151026484375, 157.86399040000006, 393.926876964227)
+
+Text:
+Section: 1 Introduction
+
+
+================================================================================
+Node #5 | Type: paragraph | Page: 1
+================================================================================
+Section: 1 Introduction
+BBox: (105.825, 611.3606574484376, 490.20980892399973, 426.61744621843746)
+
+Text:
+Section: 1 Introduction
+
+Paragraph:
+Gating mechanisms have been widely utilized, from early models like LSTMs (Hochreiter &Schmidhuber, 1997) and Highway Networks (Srivastava et al., 2015) to recent state space models (Gu & Dao, 2023), linear attention (Hua et al., 2022), and also softmax attention (Lin et al., 2025). Yet, existing literature rarely examines the specific effects of gating. In this work, we conduct comprehensive experiments to systematically investigate gating-augmented softmax attention variants. Specifically, we perform a comprehensive comparison over 30 variants of 15B Mixture-of-Experts (MoE) models and 1.7B dense models trained on a 3.5 trillion token dataset. Our central finding is that a simple modificationapplying a head-specific sigmoid gate after the Scaled Dot-Product Attention (SDPA)-consistently improves performance. This modification also enhances training stability, tolerates larger learning rates, and improves scaling properties. By comparing various gating positions and computational variants, we attribute this effectiveness to two key factors: (1) introducing non-linearity upon the low-rank mapping in the softmax attention, and (2) applying query-dependent sparse gating scores to modulate the SDPA output. Notably, we find this sparse gating mechanism mitigates 'attention sink' and enhances long-context extrapolation performance, and we also release related codes and models to facilitate future research.
+
+
+================================================================================
+Node #6 | Type: paragraph | Page: 1
+================================================================================
+Section: 1 Introduction
+BBox: (134.64400000000003, 688.6846574484376, 372.2298378000001, 666.9834462184376)
+
+Text:
+Section: 1 Introduction
+
+Paragraph:
+Qwen Team, Alibaba Group University of Edinburgh 4 MIT 5 Tsinghua University
+
+
+================================================================================
+Node #7 | Type: paragraph | Page: 1
+================================================================================
+Section: 1 Introduction
+BBox: (123.24400000000003, 727.1848470484375, 470.28703392000006, 679.2844462184376)
+
+Text:
+Section: 1 Introduction
+
+Paragraph:
+Zihan Qiu ∗ 1 , Zekun Wang ∗ 1 , Bo Zheng ∗ 1 , Zeyu Huang ∗ 2 , Kaiyue Wen 3 , Songlin Yang 4 , Rui Men 1 , Le Yu 1 , Fei Huang 1 , Suozhi Huang 5 Dayiheng Liu B 1 , Jingren Zhou 1 , Junyang Lin B 1 1 2 3 Stanford University
+
+
+================================================================================
+Node #8 | Type: section_header | Page: 1
+================================================================================
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free
+BBox: (73.55, 770.5578926484375, 523.5185629999997, 741.0710595958059)
+
+Text:
+Section: Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free
+
+
+================================================================================
+Node #9 | Type: figure | Page: 1
+================================================================================
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free
+BBox: (70.82754516601562, 819.9931125640869, 119.5950927734375, 799.6100730895996)
+
+Text:
+Figure
+
+
+================================================================================
+Node #10 | Type: section_header | Page: 1
+================================================================================
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+BBox: (274.732, 635.8651026484376, 320.54432640000005, 624.576876964227)
+
+Text:
+Section: Abstract
+
+
+================================================================================
+Node #11 | Type: paragraph | Page: 1
+================================================================================
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+BBox: (470.78600000000006, 712.9666574484376, 473.2766500000001, 703.5664462184375)
+
+Text:
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+
+Paragraph:
+,
+
+
+================================================================================
+Node #12 | Type: paragraph | Page: 2
+================================================================================
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+BBox: (70.86599999999999, 121.50720864843754, 524.40945012, 97.52440637293319)
+
+Text:
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+
+Paragraph:
+Multi-Head Concatenation: In multi-head attention, the above process is repeated in parallel for h heads, with each head having its projection matrices W i q , W i k , W i v . All heads' outputs are concatenated:
+
+
+================================================================================
+Node #13 | Type: paragraph | Page: 2
+================================================================================
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+BBox: (70.448, 165.5547154484375, 524.4049885320001, 134.9554462184375)
+
+Text:
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+
+Paragraph:
+where QK T √ d k ∈ R n × n represents the scaled dot-product similarity matrix, and softmax ( · ) ensures the attention weights are no-negative and sum to 1 across each row.
+
+
+================================================================================
+Node #14 | Type: paragraph | Page: 2
+================================================================================
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+BBox: (70.866, 219.5862086484375, 525.6540614248, 199.10744621843753)
+
+Text:
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+
+Paragraph:
+Scaled Product Dot-Product Attention (SDPA): computes attention scores between queries and keys, followed by a softmax normalization. The output is a weighted sum of the values:
+
+
+================================================================================
+Node #15 | Type: paragraph | Page: 2
+================================================================================
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+BBox: (70.866, 266.5612086484375, 522.19518458, 243.81940637293314)
+
+Text:
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+
+Paragraph:
+QKV Linear Projections: The input X is linearly transformed into queries Q , keys K , and values V using learned weight matrices W Q , W K , W V ∈ R d model × d k and Q , K , V ∈ R n × d k :
+
+
+================================================================================
+Node #16 | Type: paragraph | Page: 2
+================================================================================
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+BBox: (70.866, 302.40141744843754, 524.4053229320002, 280.00944621843746)
+
+Text:
+Section: 1 Introduction > Gated Attention for Large Language Models: Non-linearity, Sparsity, and Attention-Sink-Free > Abstract
+
+Paragraph:
+Given an input X ∈ R n × d model , where n is the sequence length and d model is the model dimension, the computation of transformer's attention layer (Vaswani, 2017) could be divided into four stages.
+
+
+================================================================================
+Node #17 | Type: section_header | Page: 2
+================================================================================
+Section: 1 Introduction > 2.1 Preliminary: Multi-Head Softmax Attention
+BBox: (70.866, 322.56420864843744, 293.67954900000007, 313.15741685896387)
+
+Text:
+Section: 2.1 Preliminary: Multi-Head Softmax Attention
+
+
+================================================================================
+Node #18 | Type: section_header | Page: 2
+================================================================================
+Section: 2 Gated-Attention Layer
+BBox: (70.866, 346.9081026484375, 210.96898880000003, 335.619876964227)
+
+Text:
+Section: 2 Gated-Attention Layer
+
+
+================================================================================
+Node #19 | Type: paragraph | Page: 2
+================================================================================
+Section: 2 Gated-Attention Layer
+BBox: (70.866, 406.48465744843753, 524.7927009576003, 364.2074462184375)
+
+Text:
+Section: 2 Gated-Attention Layer
+
+Paragraph:
+In summary, our work highlights the impact of gating in standard attention layers on the performance and behaviors of models. By evaluating gating variants, we uncover their ability to introduce non-linearity and sparsity, and eliminate attention sinks. These findings deepen our understanding of the mechanisms of gated attention. We will open-source our attention-sink-free models to advance future research.
+
+
+================================================================================
+Node #20 | Type: paragraph | Page: 2
+================================================================================
+Section: 2 Gated-Attention Layer
+BBox: (70.448, 533.0594704484375, 526.0763221919998, 414.0204462184375)
+
+Text:
+Section: 2 Gated-Attention Layer
+
+Paragraph:
+linear projection. Therefore, introducing non-linearity through gating at positions G 1 or G 2 can increase the expressiveness of this low-rank linear transformation (Sec. 4.1). (ii) Sparsity. Although non-linear gating variants consistently enhance performance, we observe that their gains vary. Our analysis further reveals that the pronounced sparsity of the gating scores is another crucial factor, introducing inputdependent sparsity to SDPA outputs (Sec. 4.2). Moreover, sparse gating eliminates the attention sink (Xiao et al., 2023): the initial tokens disproportionately dominate attention scores (Fig. 2, Sec. 4.3). Previous work (Xiao et al., 2023; Sun et al., 2024; Gu et al., 2024) explains attention sinks as an accumulation of redundant attention due to non-negative softmax normalization. Empirically, we verify that when query-dependent sparse gating is applied at the SDPA output , both our dense and MoE models (trained on 3.5T tokens) exhibit no attention sink. Furthermore, these models demonstrate superior performance in length generalization, achieving a gain of over 10 points on RULER (Hsieh et al., 2024)(Sec.4.4).
+
+
+================================================================================
+Node #21 | Type: caption | Page: 2
+================================================================================
+Section: 2 Gated-Attention Layer
+BBox: (70.588, 604.0316574484376, 525.529768, 545.0829871284376)
+
+Text:
+Caption: Figure 1: Left : Investigated positions for applying gating operations.; Middle : Performance comparison (Test PPL and MMLU) of 15B MoE models with gating applied at various positions. Gating after SDPA ( G 1 ) yields the best overall results. Gating after the Value layer ( G 2 ) also demonstrates notable improvements, particularly in PPL. Right : Training loss comparison (smoothed, 0.9 coeff.) over 3.5T tokens between baseline and SDPA-gated 1.7B dense models under identical hyperparameters. Gating results in lower final loss and substantially enhanced training stability, mitigating loss spikes. This stability allows for potentially higher learning rates and facilitates better scaling.
+
+
+================================================================================
+Node #22 | Type: figure | Page: 2
+================================================================================
+Section: 2 Gated-Attention Layer
+BBox: (68.4679183959961, 795.3173484802246, 523.8556518554688, 610.3510284423828)
+
+Text:
+Figure: Caption: Figure 1: Left : Investigated positions for applying gating operations.; Middle : Performance comparison (Test PPL and MMLU) of 15B MoE models with gating applied at various positions. Gating after SDPA ( G 1 ) yields the best overall results. Gating after the Value layer ( G 2 ) also demonstrates notable improvements, particularly in PPL. Right : Training loss comparison (smoothed, 0.9 coeff.) over 3.5T tokens between baseline and SDPA-gated 1.7B dense models under identical hyperparameters. Gating results in lower final loss and substantially enhanced training stability, mitigating loss spikes. This stability allows for potentially higher learning rates and facilitates better scaling.
+
+
+================================================================================
+Node #23 | Type: paragraph | Page: 3
+================================================================================
+Section: 2 Gated-Attention Layer
+BBox: (70.866, 116.40365744843757, 524.412567992, 91.45369220002249)
+
+Text:
+Section: 2 Gated-Attention Layer
+
+Paragraph:
+Unless otherwise specified, we employ head-specific, multiplicative gating utilizing the sigmoid activation function ( σ ( x ) = 1 1 + e -x ).
+
+
+================================================================================
+Node #24 | Type: paragraph | Page: 3
+================================================================================
+Section: 2 Gated-Attention Layer
+BBox: (70.448, 297.7236574484375, 525.8734996879999, 123.9404462184375)
+
+Text:
+Section: 2 Gated-Attention Layer
+
+Paragraph:
+In this work, we comprehensively investigate several variants of gating mechanisms within the attention layers. Our exploration focuses on five key aspects: (1) Positions. We study the effect of applying gating at different positions, as illustrated in Fig. 1(left): (a) after the Q , K , V projections (Equ. 1), corresponding to positions G 2 , G 3 , G 4 in Fig. 1(left); (b) following the SDPA (Equ. 3) outputs ( G 1 ). (c) after the final concatenated multi-head attention outputs (Equ. 4, G 5 ). (2) Granularity. We consider two levels of granularity for the gating score: (a) Headwise: A single scalar gating score modulates the entire output of an attention head. (b) Elementwise: Gating scores are vectors with the same dimensionality as Y , enabling fine-grained, per-dimension modulation. (3) Head Specific or Shared. Given the multi-head nature of attention, we further consider: (a) Head-Specific: each attention head has its specific gating scores, enabling independent modulation for each head. (b) Head-Shared: W θ and gating scores are shared across heads. (4) Multiplicative or additive. For applying gating score to Y , we consider (a) Multiplicative Gating: The gated output Y ′ is computed as: Y ′ = Y · σ ( Xθ ) . (b) Additive Gating: Y ′ = Y + σ ( Xθ ) . (5) Activation Function. We mainly consider two common activation functions: SiLU (Shazeer, 2020) and sigmoid. We only use SiLU for additive gating due to its unbounded output range, and sigmoid only gives scores in [ 0, 1 ] . Additionally, to further dissect the mechanisms underlying gating's effectiveness, we also consider Identity Mapping or RMSNorm (Zhang & Sennrich, 2019) (detailed in Sec 4.1).
+
+
+================================================================================
+Node #25 | Type: paragraph | Page: 3
+================================================================================
+Section: 2 Gated-Attention Layer
+BBox: (70.448, 347.5864704484375, 526.1574582640001, 305.26044621843744)
+
+Text:
+Section: 2 Gated-Attention Layer
+
+Paragraph:
+where Y is the input to be modulated, X is another input used to compute the gating scores 1 , W θ refers to the learnable parameters of gate, σ is an activation function (e.g., sigmoid), and Y ′ is the gated output. The gating score, σ ( XW θ ) , effectively acts as a dynamic filter, controlling the information flow from Y by selectively preserving or erasing its features.
+
+
+================================================================================
+Node #26 | Type: paragraph | Page: 3
+================================================================================
+Section: 2 Gated-Attention Layer
+BBox: (70.55699999999987, 385.9516574484375, 244.75306099999995, 376.5514462184375)
+
+Text:
+Section: 2 Gated-Attention Layer
+
+Paragraph:
+The gating mechanism is formalized as:
+
+
+================================================================================
+Node #27 | Type: section_header | Page: 3
+================================================================================
+Section: 2 Gated-Attention Layer > 2.2 Augmenting Attention Layer with Gating Mechanisms
+BBox: (70.86599999999987, 406.5862086484375, 341.8387573999999, 397.1794168589638)
+
+Text:
+Section: 2.2 Augmenting Attention Layer with Gating Mechanisms
+
+
+================================================================================
+Node #28 | Type: caption | Page: 3
+================================================================================
+Section: 2 Gated-Attention Layer > 2.2 Augmenting Attention Layer with Gating Mechanisms
+BBox: (70.866, 530.4026574484376, 524.4139491840003, 471.4539871284375)
+
+Text:
+Caption: Figure 2: Left : Proportion of attention allocated to the initial token per layer (test perplexity dataset). The baseline model suffers from a significant attention sink, with an average of 46.7% of attention scores across layers directed towards the first token. Introducing a gate effectively alleviates this, reducing the proportion to 4.8%. Right : Average attention map weights for each head. Layer 21 in the baseline model demonstrates a strong attention sink (83% on the first token), which is substantially reduced by the gate (4%). In the final output layer, the gate amplifies the existing tendency for the model to attend to individual tokens within the sequence.
+
+
+================================================================================
+Node #29 | Type: figure | Page: 3
+================================================================================
+Section: 2 Gated-Attention Layer > 2.2 Augmenting Attention Layer with Gating Mechanisms
+BBox: (72.35283660888672, 793.6831359863281, 522.3748168945312, 536.4696655273438)
+
+Text:
+Figure: Caption: Figure 2: Left : Proportion of attention allocated to the initial token per layer (test perplexity dataset). The baseline model suffers from a significant attention sink, with an average of 46.7% of attention scores across layers directed towards the first token. Introducing a gate effectively alleviates this, reducing the proportion to 4.8%. Right : Average attention map weights for each head. Layer 21 in the baseline model demonstrates a strong attention sink (83% on the first token), which is substantially reduced by the gate (4%). In the final output layer, the gate amplifies the existing tendency for the model to attend to individual tokens within the sequence.
+
+
+================================================================================
+Node #30 | Type: paragraph | Page: 4
+================================================================================
+Section: 2 Gated-Attention Layer > 2.2 Augmenting Attention Layer with Gating Mechanisms
+BBox: (70.408, 132.81520864843753, 524.830303636, 68.50144621843754)
+
+Text:
+Section: 2 Gated-Attention Layer > 2.2 Augmenting Attention Layer with Gating Mechanisms
+
+Paragraph:
+From Tab. 1, we observe: (i) SDPA and value output gating are effective . Inserting gates at the output of SDPA ( G 1 ) or the value map ( G 2 ) is the most effective, achieving lower PPL and better overall benchmark performance than other variants. We will further investigate why gating at these two positions is effective in Sec 4.2. (ii) Head-Specific Gating Matters . Applying headwise gating at G 1 and G 2 introduces very few additional parameters (less than 2M for the MoE-15A2B model) but still delivers substantial improvements (rows 10 and 11). When sharing gating scores across different attention heads (we average over the query
+
+
+================================================================================
+Node #31 | Type: paragraph | Page: 4
+================================================================================
+Section: 2 Gated-Attention Layer > 2.2 Augmenting Attention Layer with Gating Mechanisms
+BBox: (70.368, 215.38565744843754, 526.1503746840001, 140.23244621843753)
+
+Text:
+Section: 2 Gated-Attention Layer > 2.2 Augmenting Attention Layer with Gating Mechanisms
+
+Paragraph:
+Wefirst compare the results of different gated attention layers on the training-efficient MoE-15A2B models. All models use a scheduler that warms up to a maximum LR of 2e-3 in 1k steps and decays using cosine to 3e-5. We use a global bsz of 1024, comprising 100k optimization steps. The results are summarized in Tab. 1. To provide a fair comparison, we supplement the vanilla MoE baseline (row 1) with parameter expansion methods, including increasing the number of key-value heads (row 2), increasing the number of query heads (row 3), and increasing both the total and activated number of experts (row 4). These methods introduce a comparable or greater number of parameters than the gating mechanisms.
+
+
+================================================================================
+Node #32 | Type: section_header | Page: 4
+================================================================================
+Section: 2 Gated-Attention Layer > 2.2 Augmenting Attention Layer with Gating Mechanisms > 3.2.1 Gated Attention for MoE models
+BBox: (70.866, 234.67820864843748, 249.93377240000007, 225.2714168589638)
+
+Text:
+Section: 3.2.1 Gated Attention for MoE models
+
+
+================================================================================
+Node #33 | Type: section_header | Page: 4
+================================================================================
+Section: 2 Gated-Attention Layer > 3.2 Main Results
+BBox: (70.866, 255.19320864843746, 153.76479460000004, 245.78641685896378)
+
+Text:
+Section: 3.2 Main Results
+
+
+================================================================================
+Node #34 | Type: paragraph | Page: 4
+================================================================================
+Section: 2 Gated-Attention Layer > 3.2 Main Results
+BBox: (70.866, 324.0172086484374, 525.6514239580004, 270.6624462184375)
+
+Text:
+Section: 2 Gated-Attention Layer > 3.2 Main Results
+
+Paragraph:
+Evaluation We test the few-shots results on popular benchmarks, including Hellaswag (Zellers et al., 2019) for English, MMLU (Hendrycks et al., 2020) for general knowledge, GSM8k (Cobbe et al., 2021) for math reasoning, HumanEval (Chen et al., 2021) for coding, C-eval (Huang et al., 2024) and CMMLU (Li et al., 2023) for Chinese proficiency. We also report the perplexity (PPL) of language modeling on diverse held-out test sets, including domains like English, Chinese, Code, Math, Law, and Literature.
+
+
+================================================================================
+Node #35 | Type: paragraph | Page: 4
+================================================================================
+Section: 2 Gated-Attention Layer > 3.2 Main Results
+BBox: (70.567, 435.3352086484375, 526.1555423383999, 338.1444462184375)
+
+Text:
+Section: 2 Gated-Attention Layer > 3.2 Main Results
+
+Paragraph:
+Model Architecture and Training Settings We conduct experiments on both MoE models (15B total parameters with 2.54B activated, 15A2B) and dense models (1.7B total parameters). The 15A2B MoE models utilize 128 total experts with top-8 softmax gating, fine-grained experts (Dai et al., 2024), global-batch LBL (Qiu et al., 2025), and z-loss (Zoph et al., 2022). We adopt group query attention (GQA) (Ainslie et al., 2023) for the attention part. We train the models on subsets of a 3.5T high-quality tokens, encompassing multilingual, math, and general knowledge content. The context sequence length is set to 4096. More detailed configurations, such as learning rate and batch size (bsz), will be introduced in each part. Other hyperparameters follow the default values of the AdamW optimizer. Since the parameters and flops introduced by the gating are small, the wall-time latency introduced by gating is less than 2%.
+
+
+================================================================================
+Node #36 | Type: section_header | Page: 4
+================================================================================
+Section: 2 Gated-Attention Layer > 3.1 Experimental Setups
+BBox: (70.866, 455.8502086484375, 187.92655000000008, 446.4434168589638)
+
+Text:
+Section: 3.1 Experimental Setups
+
+
+================================================================================
+Node #37 | Type: section_header | Page: 4
+================================================================================
+Section: 3 Experiments
+BBox: (70.866, 480.8711026484375, 157.4336032, 469.582876964227)
+
+Text:
+Section: 3 Experiments
+
+
+================================================================================
+Node #38 | Type: table | Page: 4
+================================================================================
+Section: 3 Experiments
+BBox: (71.36292266845703, 744.9048156738281, 523.0579833984375, 502.0244445800781)
+
+Text:
+Table: Caption: Table 1: Gating variant performance and results. We train the 15A2B MoE models on 400B tokens. d k is the head dim, d model is the model's hidden dim, and n is the number of tokens. q refers to the number of query heads, k refers to the number of key-value heads. 'Act Func' is the activation function in Eq 5. 'Score Shape' is the gating score shape for an input X ∈ R n , d model . 'added param' indicates added parameters (Million).
+
+Table content:
+Row 1: Method=Reference Baselines (Baseline uses q = 32, k = 4 . All methods use d k = 128 .)
+Row 2: Method=(1) Baseline, Act Func=-, Score Shape=-, Added Param=0, Avg PPL=6.026, Hellaswag=73.07, MMLU=58.79, GSM8k=52.92, C-eval=60.26
+Row 3: Method=(2) k = 8, Act Func=-, Score Shape=-, Added Param=50, Avg PPL=5.979, Hellaswag=73.51, MMLU=59.78, GSM8k=52.16, C-eval=62.26
+Row 4: Method=(3) q = 48, Act Func=-, Score Shape=-, Added Param=201, Avg PPL=5.953, Hellaswag=73.59, MMLU=58.45, GSM8k=53.30, C-eval=59.67
+Row 5: Method=(4) Add 4 Experts, Act Func=-, Score Shape=-, Added Param=400, Avg PPL=5.964, Hellaswag=73.19, MMLU=58.84, GSM8k=52.54, C-eval=63.19
+Row 6: Method=Gating Position Variants
+Row 7: Method=(5) SDPA Elementwise G 1 (6) v Elementwise G 2 (7) k Elementwise G 3, Act Func=sigmoid, Score Shape=n × q × d k, Added Param=201, Avg PPL=5.761, Hellaswag=74.64, MMLU=60.82, GSM8k=55.27, C-eval=62.20
+Row 8: Method=, Act Func=sigmoid, Score Shape=n × k × d k, Added Param=25, Avg PPL=5.820, Hellaswag=74.38, MMLU=59.17, GSM8k=53.97, C-eval=61.00
+Row 9: Method=, Act Func=sigmoid, Score Shape=n × k × d k, Added Param=25, Avg PPL=6.016, Hellaswag=72.88, MMLU=59.18, GSM8k=50.49, C-eval=61.74
+Row 10: Method=(8) q Elementwise G 4, Act Func=sigmoid, Score Shape=n × q × d k, Added Param=201, Avg PPL=5.981, Hellaswag=73.01, MMLU=58.74, GSM8k=53.97, C-eval=62.14
+Row 11: Method=(9) Dense Output G 5, Act Func=sigmoid, Score Shape=n × d model, Added Param=100, Avg PPL=6.017, Hellaswag=73.32, MMLU=59.41, GSM8k=50.87, C-eval=59.43
+Row 12: Method=Gating Granularity Variants
+Row 13: Method=(10) SDPA Headwise G 1 (11) v Headwise G 2, Act Func=sigmoid sigmoid, Score Shape=n × q n × q, Added Param=1.6 0.2, Avg PPL=5.792 5.808, Hellaswag=74.50 74.38, MMLU=60.05 59.32, GSM8k=54.44 53.53, C-eval=62.61 62.61
+Row 14: Method=Head-Specific v.s. Head-Shared Gating
+Row 15: Method=(12) SDPA Head-Shared G 1 (13) v Head-Shared G 2, Act Func=sigmoid sigmoid, Score Shape=n × d k n × d k, Added Param=201 25, Avg PPL=5.801 5.867, Hellaswag=74.34 74.10, MMLU=60.06 59.02, GSM8k=53.15 53.03, C-eval=61.01 60.61
+Row 16: Method=Multiplicative v.s. Additive
+Row 17: Method=(14) SDPA Additive G 1, Act Func=SiLU, Score Shape=n × q × d k, Added Param=201, Avg PPL=5.821, Hellaswag=74.81, MMLU=60.06, GSM8k=53.30, C-eval=60.98
+Row 18: Method=Activation Variants
+Row 19: Method=(15) SDPA Elementwise G 1, Act Func=SiLU, Score Shape=n × q × d k, Added Param=201, Avg PPL=5.822, Hellaswag=74.22, MMLU=60.49, GSM8k=54.59, C-eval=62.34
+
+
+================================================================================
+Node #39 | Type: caption | Page: 4
+================================================================================
+Section: 3 Experiments
+BBox: (70.557, 788.1066574484375, 524.4118092799999, 746.8689871284375)
+
+Text:
+Caption: Table 1: Gating variant performance and results. We train the 15A2B MoE models on 400B tokens. d k is the head dim, d model is the model's hidden dim, and n is the number of tokens. q refers to the number of query heads, k refers to the number of key-value heads. 'Act Func' is the activation function in Eq 5. 'Score Shape' is the gating score shape for an input X ∈ R n , d model . 'added param' indicates added parameters (Million).
+
+
+================================================================================
+Node #40 | Type: paragraph | Page: 5
+================================================================================
+Section: 3 Experiments
+BBox: (70.866, 129.19665744843746, 524.4125679920005, 97.90418293510425)
+
+Text:
+Section: 3 Experiments
+
+Paragraph:
+In summary, we identify SDPA element-wise gating as the most effective method to augment the attention mechanism. Applying this method to dense transformers further demonstrates that the gate enables stable training with larger batch sizes and learning rates, resulting in improved performance.
+
+
+================================================================================
+Node #41 | Type: caption | Page: 5
+================================================================================
+Section: 3 Experiments
+BBox: (70.408, 212.00620864843745, 526.1504257324007, 136.73244621843753)
+
+Text:
+Caption: Tab. 2 reveals that: (i) Gating is effective across various settings Across various model configurations (row 1 v.s. 2, 5 v.s. 8), training data (row 3 v.s. 4), and hyperparameters (row 11 v.s. 13), applying SDPA output gating consistently yields benefits. (ii) Gating improves stability and facilitates scaling. Under the 3.5T token setting, gating improves training stability, largely reducing the loss spike (Fig. 1, right). When increasing the maximum LR, baselines encounter convergence issues (row 6, 12). While adding sandwich norm (Ding et al., 2021) restores convergence, the improvement is negligible. In contrast, increasing the maximum LR in models with gating results in a noticeable improvement.
+
+
+================================================================================
+Node #42 | Type: paragraph | Page: 5
+================================================================================
+Section: 3 Experiments
+BBox: (70.368, 349.3706574484375, 525.6525131880003, 219.42244621843747)
+
+Text:
+Section: 3 Experiments
+
+Paragraph:
+We also conduct experiments on dense models following (Yang et al., 2024a) to validate SDPA output sigmoid gating. When using gating, we reduce the width of FFN to maintain the parameter size. Most experiments use optimized hyperparameters for the baseline. For instance, for the 1.7B model trained on 400B tokens, we use a maximum LR of 4e-3 and a bsz of 1024. For training on 3.5T tokens, we increase the maximum LR to 4.5e-3 and the bsz to 2048. Prior work has established that while increased network depth, large learning rates, and large batch sizes can significantly improve model performance (McCandlish et al., 2018; Wang et al., 2022; D'Angelo et al., 2024) and distributed training efficiency, they often introduce training instabilities (Wang et al., 2022; Zeng et al., 2022; Takase et al., 2023). We observe that applying gating mechanisms demonstrably reduces the occurrence of loss spikes during training (Chowdhery et al., 2023; Takase et al., 2023), suggesting a promising role for gating in enhancing training stability. Motivated by this finding, we introduce another experimental setting characterized by an increased number of layers, a higher maximum learning rate, and a larger batch size to further probe gating's stabilizing effects.
+
+
+================================================================================
+Node #43 | Type: section_header | Page: 5
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.866, 368.6632086484375, 260.71330560000007, 359.2564168589638)
+
+Text:
+Section: 3.2.2 Gated Attention for Dense Models.
+
+
+================================================================================
+Node #44 | Type: paragraph | Page: 5
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.866, 436.07547044843756, 525.6517495280001, 382.79044621843747)
+
+Text:
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+
+Paragraph:
+Overall, adding gating at the value layer ( G 2 ) and SDPA output ( G 1 ) reduces PPL by more than 0.2, outperforming various parameter-expanding baselines. However, gating at G 1 achieves better PPL and benchmark results. As long as different heads receive distinct gating scores, the granularity of gating and the choice of activation function have relatively minor impacts. We will further analyze the reasons behind these observations in Analysis (Sec 4.2).
+
+
+================================================================================
+Node #45 | Type: paragraph | Page: 5
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.866, 507.80647044843755, 524.4110321159999, 443.5624462184375)
+
+Text:
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+
+Paragraph:
+head dimension q to obtain an n × d k score from the original n × q × d k ), the benchmark improvements are smaller than those achieved by headwise gating (row 12 v.s. 10, 13 v.s. 11). This underscores the importance of applying distinct gating scores for different attention heads. (iii) Multiplicative Gating is Preferred . Additive SDPA output gating underperforms the multiplicative one, although it shows improvements over the baselines. (iv) Sigmoid Activation is Better . Replacing the activation function in the most effective gating configuration (row 5) with SiLU (row 15) leads to less improvement.
+
+
+================================================================================
+Node #46 | Type: table | Page: 5
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (71.56202697753906, 742.6415786743164, 522.8314208984375, 530.6436157226562)
+
+Text:
+Table: Caption: Table 2: Performance of different methods with varying learning rates, batch sizes, and model configurations. 'SDPA' refers to the sigmoid gating after SDPA in Eq 3, and 'sandwitch norm' (Ding et al., 2021) indicates normalizing attention/ffn outputs before adding them to the residual. When using gating, we reduce the FFN's width so that all methods have the same number of parameters. '-' means the model diverges during training.
+
+Table content:
+Row 1: Method=28 Layer, 1.7B Parameters, 400B Tokens , Batch Size=1024
+Row 2: Method=(1) Baseline (2) SDPA Elementwise, Max LR=4.0 × 10 - 3 4.0 × 10 - 3, Avg PPL=7.499 7.404, HumanEval=28.66 29.27, MMLU=50.21 51.15, GSM8k=27.82 28.28, Hellaswag=64.94 65.48, C-eval=49.15 50.72, CMMLU=49.52 50.72
+Row 3: Method=28 Layer, 1.7B Parameters, 3.5T Tokens , Batch Size=2048
+Row 4: Method=(3) Baseline (4) SDPA Elementwise, Max LR=4.5 × 10 - 3 4.5 × 10 - 3, Avg PPL=6.180 6.130, HumanEval=34.15 37.80, MMLU=59.10 59.61, GSM8k=69.07 70.20, Hellaswag=68.02 68.84, C-eval=68.19 68.52, CMMLU=64.95 65.76
+Row 5: Method=48 Layer, 1.7B Parameters, 400B Tokens , Batch Size=1024
+Row 6: Method=(5) Baseline, Max LR=4.0 × 10 - 3, Avg PPL=7.421 9.195, HumanEval=28.05, MMLU=52.04, GSM8k=32.98 15.24 32.90, Hellaswag=65.96 57.00 66.00, C-eval=51.11, CMMLU=51.86
+Row 7: Method=(6) Baseline, Max LR=8.0 × 10 - 3, Avg PPL=, HumanEval=21.34, MMLU=44.28, GSM8k=, Hellaswag=, C-eval=43.11, CMMLU=42.63
+Row 8: Method=(7) Baseline+Sandwich Norm (8) SDPA Elementwise, Max LR=8.0 × 10 - 3 4.0 × 10 - 3, Avg PPL=7.407 7.288, HumanEval=30.49 31.71, MMLU=52.07 52.44, GSM8k=32.37, Hellaswag=66.28, C-eval=52.04 52.06, CMMLU=51.72 52.29
+Row 9: Method=(9) SDPA Headwise, Max LR=4.0 × 10 - 3, Avg PPL=7.370, HumanEval=31.10, MMLU=53.83, GSM8k=34.12, Hellaswag=65.59, C-eval=55.07, CMMLU=52.38
+Row 10: Method=(10) SDPA Elementwise, Max LR=8.0 × 10 - 3, Avg PPL=7.325, HumanEval=31.10, MMLU=54.47, GSM8k=36.62, Hellaswag=66.40, C-eval=53.91, CMMLU=53.80
+Row 11: Method=48 Layer, 1.7B Parameters, 1T Tokens , Batch Size=4096
+Row 12: Method=(11) Baseline, Max LR=5.3 × 10 - 3 8.0 × 10 - 3, Avg PPL=7.363 -, HumanEval=29.88, MMLU=54.44, GSM8k=32.22, Hellaswag=65.43, C-eval=53.72, CMMLU=53.37
+Row 13: Method=(12) Baseline, Max LR=, Avg PPL=, HumanEval=-, MMLU=-, GSM8k=-, Hellaswag=-, C-eval=-, CMMLU=-
+Row 14: Method=(13) SDPA Elementwise, Max LR=5.3 × 10 - 3, Avg PPL=7.101, HumanEval=34.15, MMLU=55.70, GSM8k=36.69, Hellaswag=67.17, C-eval=54.51, CMMLU=54.68
+Row 15: Method=(14) SDPA Elementwise, Max LR=8.0 × 10 - 3, Avg PPL=7.078, HumanEval=31.71, MMLU=56.47, GSM8k=39.73, Hellaswag=67.38, C-eval=55.52, CMMLU=55.77
+
+
+================================================================================
+Node #47 | Type: caption | Page: 5
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.557, 784.5066574484375, 526.1613457919999, 745.4829871284376)
+
+Text:
+Caption: Table 2: Performance of different methods with varying learning rates, batch sizes, and model configurations. 'SDPA' refers to the sigmoid gating after SDPA in Eq 3, and 'sandwitch norm' (Ding et al., 2021) indicates normalizing attention/ffn outputs before adding them to the residual. When using gating, we reduce the FFN's width so that all methods have the same number of parameters. '-' means the model diverges during training.
+
+
+================================================================================
+Node #48 | Type: paragraph | Page: 6
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.866, 120.22025104843749, 524.4072403839999, 95.62454138100236)
+
+Text:
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+
+Paragraph:
+2 Note that concatenating outputs from different heads and then multiplying with W O is equivalent to multiplying each head's output with its corresponding W k O before concatenation
+
+
+================================================================================
+Node #49 | Type: paragraph | Page: 6
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.866, 171.62365744843748, 524.4114471387999, 129.34744621843754)
+
+Text:
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+
+Paragraph:
+In summary, the enhanced performance associated with effective gating variants is likely attributable to the introduction of non-linearity between W V and W O . Although applying gating at positions G 1 and G 2 can can both introduce this non-linearity, these applications yield differing performance gains. This observed difference motivates us to further analyze the impacts of gating at these two positions.
+
+
+================================================================================
+Node #50 | Type: paragraph | Page: 6
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.56700000000001, 254.3634704484375, 525.873470808, 179.16044621843753)
+
+Text:
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+
+Paragraph:
+For additive gating at G 1 , the output of gating passes through SiLU (Tab. 3 row 4), also introducing some non-linearity, which explains the observed performance gains, albeit smaller than those achieved by multiplicative gating. Based on these insights, we conduct two additional experiments: (i) Adding SiLU only at the G 1 position without introducing additional parameters (Tab. 3 row 6). Notice this simple modification also leads to a modest reduction in PPL, but most benchmark scores remain unchanged. (ii) Removing SiLU from additive gating, such that the output of X j after gating is directly added at the G 1 position (Tab. 3 row 7). This further diminishes the gains of addictive gating.
+
+
+================================================================================
+Node #51 | Type: paragraph | Page: 6
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.408, 304.1774704484376, 525.6593763696, 261.3074063729332)
+
+Text:
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+
+Paragraph:
+Notably, adding gating at the G 2 (Tab. 3 row 3) position corresponds to the first modification (Equ. 7), while adding gating (row 4) or group normalization (row 5) at the G 1 position corresponds to the second (Equ. 8). This also explains why adding gating or normalization at the G 5 position after W O has no effect (Tab. 1 row 9) - it does not address the lack of non-linearity between W V and W O .
+
+
+================================================================================
+Node #52 | Type: paragraph | Page: 6
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.866, 393.81165744843753, 524.6078349520003, 373.4524462184375)
+
+Text:
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+
+Paragraph:
+Given that adding non-linearity between two linear mappings can improve their expensiveness (Montufar et al., 2014), we have two modifications to mitigate the low-rank problem:
+
+
+================================================================================
+Node #53 | Type: paragraph | Page: 6
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.448, 462.30241744843755, 525.6541036960001, 401.3474462184375)
+
+Text:
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+
+Paragraph:
+where W k O is the parameters of the output layer W O corresponding to the k -th head 2 . Here, S k ij denotes the attention score of the i -th token attending to the j -th token in the k -th head, X j is the input to the attention for token j , and X j W k V represents the value output of token j in the k -th head. From Equ. 6, we can merge W k V W k O into one low-rank linear mapping applied over all X j as d k < d model . With GQA, W V is shared among heads within the same group, further diminishing the expressiveness.
+
+
+================================================================================
+Node #54 | Type: paragraph | Page: 6
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.866, 507.83747044843756, 525.6500769146, 498.3874462184375)
+
+Text:
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+
+Paragraph:
+In multi-head attention, the output of the i -th token, corresponding to the k -th head, can be expressed as:
+
+
+================================================================================
+Node #55 | Type: paragraph | Page: 6
+================================================================================
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+BBox: (70.448, 557.6006574484376, 525.6495244079999, 515.3244462184375)
+
+Text:
+Section: 3 Experiments > 3.2.2 Gated Attention for Dense Models.
+
+Paragraph:
+Inspired by prior works that utilize group norm for the SDPA output (Sun et al., 2023; Ye et al., 2024), with the same setting in Sec. 3.2.1, we apply RMSNorm (Zhang & Sennrich, 2019) independently to the output of each attention head before concatenation. As shown in Tab. 3 row 5, applying RMSNorm, which introduces almost no additional parameters, also leads to a significant reduction in PPL.
+
+
+================================================================================
+Node #56 | Type: section_header | Page: 6
+================================================================================
+Section: 3 Experiments > 4.1 Non-linearity Improves the Expressiveness of Low-Rank Mapping in Attention
+BBox: (70.866, 578.2352086484375, 452.6029441999999, 568.8284168589638)
+
+Text:
+Section: 4.1 Non-linearity Improves the Expressiveness of Low-Rank Mapping in Attention
+
+
+================================================================================
+Node #57 | Type: paragraph | Page: 6
+================================================================================
+Section: 3 Experiments > 4.1 Non-linearity Improves the Expressiveness of Low-Rank Mapping in Attention
+BBox: (70.408, 646.9396574484375, 524.800680232, 593.7044462184375)
+
+Text:
+Section: 3 Experiments > 4.1 Non-linearity Improves the Expressiveness of Low-Rank Mapping in Attention
+
+Paragraph:
+In this section, we conduct a series of experiments to explore why such a simple gating mechanism can yield significant improvements in performance and training stability. Here are the takeaways according to our analysis: (1) Gating operations enhancing non-linearity consistently lead to performance gains (Sec 4.1); (2) The most effective SDPA elementwise G 1 gate introduces strong input-dependent sparsity to the SDPA outputs (Sec 4.2), which then helps to eliminate the 'attention sink' phenomenon.
+
+
+================================================================================
+Node #58 | Type: section_header | Page: 6
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free
+BBox: (70.866, 672.0811026484375, 409.1383840000001, 660.7928769642269)
+
+Text:
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free
+
+
+================================================================================
+Node #59 | Type: table | Page: 6
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free
+BBox: (105.74977111816406, 776.1704330444336, 488.7433776855469, 693.4317779541016)
+
+Text:
+Table
+
+
+================================================================================
+Node #60 | Type: paragraph | Page: 7
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free
+BBox: (69.481, 175.62865744843748, 524.8313159952002, 111.43344621843755)
+
+Text:
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free
+
+Paragraph:
+which constrains the gating scores between [0.5, 1.0]. This ensures introducing non-linearity while removing gating score sparsity. As shown in Tab. 4 row (7), the gains of NS-sigmoid gating are inferior to those of SDPA output sigmoid gating. In Appendix A.2, we provide a more detailed discussion on how sparse gating scores affect the sparsity (the proportion of values below the threshold) in SDPA hidden states. We will discuss the impact of different sparsity levels on model behavior, including reducing the 'attention sink', in the next section.
+
+
+================================================================================
+Node #61 | Type: paragraph | Page: 7
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free
+BBox: (70.368, 482.4776574484375, 524.4120499368001, 440.20144621843747)
+
+Text:
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free
+
+Paragraph:
+We analyze the gating scores (Tab. 1, 'Gate Score' column) of models with gating applied at the value ( G 2 ) and SDPA output ( G 1 ) positions, evaluated on the test language modeling data. The mean gating scores for all layers are presented in Table 4, with the score distributions visualized in Fig. 3 (layer-wise scores in Appendix A.2). Key observations include:
+
+
+================================================================================
+Node #62 | Type: section_header | Page: 7
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (70.866, 503.1122086484375, 298.25238240000004, 493.7054168589638)
+
+Text:
+Section: 4.2 Gating Introduces Input-Dependent Sparsity
+
+
+================================================================================
+Node #63 | Type: caption | Page: 7
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (70.866, 547.1466574484376, 524.4115730880001, 518.0849871284375)
+
+Text:
+Caption: Figure 3: Gating score means and distributions for SDPA elementwise (Left), value Elementwise (Middle), and SDPA elementwise with head-shared gating (Right). Most gating scores are less than 0.5, indicating that the gating scores are sparse. Among them, the SDPA output gating score exhibits the strongest sparsity.
+
+
+================================================================================
+Node #64 | Type: figure | Page: 7
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (71.48120880126953, 655.6795654296875, 217.19699096679688, 550.0953674316406)
+
+Text:
+Figure: Caption: Figure 3: Gating score means and distributions for SDPA elementwise (Left), value Elementwise (Middle), and SDPA elementwise with head-shared gating (Right). Most gating scores are less than 0.5, indicating that the gating scores are sparse. Among them, the SDPA output gating score exhibits the strongest sparsity.
+
+
+================================================================================
+Node #65 | Type: figure | Page: 7
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (223.4402313232422, 656.3606109619141, 370.0407409667969, 549.8402404785156)
+
+Text:
+Figure: Caption: Figure 3: Gating score means and distributions for SDPA elementwise (Left), value Elementwise (Middle), and SDPA elementwise with head-shared gating (Right). Most gating scores are less than 0.5, indicating that the gating scores are sparse. Among them, the SDPA output gating score exhibits the strongest sparsity.
+
+
+================================================================================
+Node #66 | Type: table | Page: 7
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (71.20521545410156, 746.2838592529297, 523.1610717773438, 659.4857482910156)
+
+Text:
+Table: Caption: Table 4: Performance of different gating methods with varying activation functions and average gate scores. 'Act-Func' refers to the activation function used for computing the gating scores, while 'M-Act' denotes the rounded maximum activation values of the hidden states output by each layer of the model. Additionally, 'F-Attn' represents the attention score of the first token, with higher values indicating more pronounced 'attention sink'.
+
+Table content:
+Row 1: Method=(1) Baseline, Act-Func=-, Gate Score=-, M-Act=1053, F-Attn=0.467, PPL=6.026, Hellaswag=73.07, MMLU=58.79, GSM8k=52.92
+Row 2: Method=(2) SDPA Elementwise Gate, Act-Func=Sigmoid, Gate Score=0.116, M-Act=94, F-Attn=0.048, PPL=5.761, Hellaswag=74.64, MMLU=60.82, GSM8k=55.27
+Row 3: Method=(3) SDPA Headwise Gate, Act-Func=Sigmoid, Gate Score=0.172, M-Act=98, F-Attn=0.073, PPL=5.792, Hellaswag=74.50, MMLU=60.05, GSM8k=54.44
+Row 4: Method=(4) SDPA Elementwise Head-shared Gate, Act-Func=Sigmoid, Gate Score=0.271, M-Act=286, F-Attn=0.301, PPL=5.801, Hellaswag=74.34, MMLU=60.06, GSM8k=53.15
+Row 5: Method=(5) v Elementwise Gate, Act-Func=Sigmoid, Gate Score=0.221, M-Act=125, F-Attn=0.297, PPL=5.820, Hellaswag=74.38, MMLU=59.17, GSM8k=51.33
+Row 6: Method=(6) SDPA Input Independent Gate, Act-Func=Sigmoid, Gate Score=0.335, M-Act=471, F-Attn=0.364, PPL=5.917, Hellaswag=73.64, MMLU=59.02, GSM8k=52.40
+Row 7: Method=(7) SDPA Elementwise Gate, Act-Func=NS-sigmoid, Gate Score=0.653, M-Act=892, F-Attn=0.451, PPL=5.900, Hellaswag=74.05, MMLU=60.05, GSM8k=52.75
+
+
+================================================================================
+Node #67 | Type: caption | Page: 7
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (70.557, 788.1066574484375, 526.1600149759998, 749.0829871284376)
+
+Text:
+Caption: Table 4: Performance of different gating methods with varying activation functions and average gate scores. 'Act-Func' refers to the activation function used for computing the gating scores, while 'M-Act' denotes the rounded maximum activation values of the hidden states output by each layer of the model. Additionally, 'F-Attn' represents the attention score of the first token, with higher values indicating more pronounced 'attention sink'.
+
+
+================================================================================
+Node #68 | Type: figure | Page: 7
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (375.5496826171875, 657.2093658447266, 520.8816528320312, 550.5107727050781)
+
+Text:
+Figure: Caption: Figure 3: Gating score means and distributions for SDPA elementwise (Left), value Elementwise (Middle), and SDPA elementwise with head-shared gating (Right). Most gating scores are less than 0.5, indicating that the gating scores are sparse. Among them, the SDPA output gating score exhibits the strongest sparsity.
+
+
+================================================================================
+Node #69 | Type: paragraph | Page: 8
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (70.368, 317.2396574484376, 526.1490690972003, 132.49644621843754)
+
+Text:
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+
+Paragraph:
+sequence length of 32k for an additional 80B tokens. This gives us models with a context length of 32k. Subsequently, we use YaRN (Peng et al., 2023) to extend the context length to 128k. We evaluate models on the RULER benchmark (Hsieh et al., 2024) and summarize results in Tab. 5. We observe the following: (i) Under the 32k setting, models with gating slightly outperform the baseline. This suggests that within the training length, the attention sink phenomenon may not hurt the model's long-context performance. (ii) When the context length is extended to 128k using YaRN, both the baseline and gated models experience a decline within the original 32k range. This observation is consistent with previous works on extending context length by modifying RoPE (Chen et al., 2023; Peng et al., 2023; Dong et al., 2025). Even though the decline is less pronounced for models with gating. (iii) At context lengths of 64k and 128k, the gated attention models outperform the baseline signifantly. From these observations, we hypothesize that adding gating helps the model adapt to the context-length extension. A possible explanation is that baseline models rely on attention sinks to adjust the distribution of attention scores. Dong et al. (2025) derives the effects of changing the RoPE based on the attention and hidden state distributions. When techniques like YaRN are applied to modify the RoPE base, the attention sink pattern may struggle to adapt in a training-free manner, leading to a noticeable drop in performance. In contrast, models with gating primarily rely on input-dependent gating scores to control information flow, making them more robust to such changes.
+
+
+================================================================================
+Node #70 | Type: table | Page: 8
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (207.55441284179688, 392.8843994140625, 523.5364990234375, 320.3896484375)
+
+Text:
+Table: Caption: Table 5: Performance of different methods across varying sequence lengths. 'YaRN Extended' indicates the expanded context length variant. '(values)' indicate the performance declines after extending the context length.
+
+Table content:
+Row 1: Method=Baseline, 4k=88.89, 8k=85.88, 16k=83.15, 32k=79.50, 64k=-, 128k=-
+Row 2: Method=SDPA-Gate, 4k=90.56, 8k=87.11, 16k=84.61, 32k=79.77, 64k=-, 128k=-
+Row 3: Method=YaRN Extended
+Row 4: Method=Baseline, 4k=82.90(-6.0), 8k=71.52(-14.4), 16k=61.23(-21.9), 32k=37.94(-41.56), 64k=37.51, 128k=31.65
+Row 5: Method=SDPA-Gate, 4k=88.13(-2.4), 8k=80.01(-7.1), 16k=76.74(-7.87), 32k=72.88(-6.89), 64k=66.60, 128k=58.82
+
+
+================================================================================
+Node #71 | Type: caption | Page: 8
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (206.622, 424.2636574484375, 524.4137830400001, 395.20298712843754)
+
+Text:
+Caption: Table 5: Performance of different methods across varying sequence lengths. 'YaRN Extended' indicates the expanded context length variant. '(values)' indicate the performance declines after extending the context length.
+
+
+================================================================================
+Node #72 | Type: paragraph | Page: 8
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+BBox: (70.866, 426.8286574484375, 198.63096519599998, 318.79844621843745)
+
+Text:
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.2 Gating Introduces Input-Dependent Sparsity
+
+Paragraph:
+Based on the attention-sinkfree pattern, we evaluate the SDPA gating's effect in the long-context setting. Specifically, we extend the context length for the models trained on 3.5T tokens. We increase the RoPE (Su et al., 2024) base from 10k to 1M and continue training on data with a
+
+
+================================================================================
+Node #73 | Type: section_header | Page: 8
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.4 SDPA Output Gating Facilitates Context Length Extension
+BBox: (70.866, 447.4632086484375, 358.4962245999999, 438.0564168589638)
+
+Text:
+Section: 4.4 SDPA Output Gating Facilitates Context Length Extension
+
+
+================================================================================
+Node #74 | Type: paragraph | Page: 8
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.4 SDPA Output Gating Facilitates Context Length Extension
+BBox: (70.258, 571.0413582484375, 526.1474551560002, 462.9314462184375)
+
+Text:
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.4 SDPA Output Gating Facilitates Context Length Extension
+
+Paragraph:
+Collectively, these observations indicate that input-dependent, head-specific gating of the SDPA output introduces significant sparsity, thereby mitigating the attention sink. Furthermore, sparsity in the SDPA outputs reduces massive activations within the model, with increased sparsity leading to smaller activations. This may explain the improved training stability with gating: by reducing massive activations, the model is less susceptible to numerical errors during BF16 training (Budzinskiy et al., 2025). We also observe that massive activations originate primarily from early layers (e.g., layer 5), where the FFN outputs large values, consistent with (Yona et al., 2025). Once added to the residual stream, these activations are propagated through subsequent layers via the pre-norm mechanism. This aligns with the effectiveness of sandwich normalization (Ding et al., 2021) in enhancing training stability (Table 2, row 7): applying LayerNorm to the FFN output prevents these large activations from entering the residual stream.
+
+
+================================================================================
+Node #75 | Type: paragraph | Page: 8
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.4 SDPA Output Gating Facilitates Context Length Extension
+BBox: (70.368, 653.7712086484376, 526.1532838040002, 578.4984462184375)
+
+Text:
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.4 SDPA Output Gating Facilitates Context Length Extension
+
+Paragraph:
+We can observe: (i) Head-wise and element-wise query-dependent sigmoid gating at the SDPA output ( G 1 ) largely reduces the attention score allocated to the first token and decreases massive activations. (ii) Enforcing shared gating scores across heads or applying gating only after the value projection ( G 2 ) decreases massive activations, but does not reduce attention scores to the first token. This reinforces the importance of head-specific gating and suggests that massive activations are not a prerequisite for attention sinks . (iii) Reducing the input-dependence of gating (row 6) or using NS-sigmoid to reduce sparsity (row 7) intensifies both massive activations and attention sink.
+
+
+================================================================================
+Node #76 | Type: paragraph | Page: 8
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.4 SDPA Output Gating Facilitates Context Length Extension
+BBox: (70.866, 747.3006574484376, 525.6512379752004, 661.1884462184374)
+
+Text:
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.4 SDPA Output Gating Facilitates Context Length Extension
+
+Paragraph:
+Based on the observation that gating introduces sparsity to the SDPA output in an input-dependent manner, we hypothesized that this mechanism can filter out context irrelevant to the current query token, thereby mitigating the attention sink (Xiao et al., 2023; Sun et al., 2024). To verify this, we analyze the distribution of attention scores (averaged over all heads) and the proportion of attention scores allocated to the first token (Fig. 2, Tab. 4, 'F-Attn' column). Inspired by the discussion about massive activation in hidden states and attention sinks (Sun et al., 2024), we also compute the mean of the maximum hidden state activations across layers, as shown in the 'M-Act' column of Tab. 4. More detailed layer-wise results are provided in the Appendix A.3.
+
+
+================================================================================
+Node #77 | Type: paragraph | Page: 9
+================================================================================
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.4 SDPA Output Gating Facilitates Context Length Extension
+BBox: (70.368, 203.21665744843745, 526.1504439360003, 106.14544621843754)
+
+Text:
+Section: 4 Analysis: Non-Linearity, Sparsity, and Attention-Sink-Free > 4.4 SDPA Output Gating Facilitates Context Length Extension
+
+Paragraph:
+This work systematically investigates the role of gating mechanisms in the standard softmax attention, revealing their significant impact on performance, training stability, and attention dynamics. Through extensive experimental comparisons over 30 variants of 15B MoE and 1.7B dense models trained on up to 3.5T tokens, we demonstrate that applying a sigmoid gate after scaled dot-product attention yields the most substantial improvements. This simple mechanism enhances non-linearity, introduces input-dependent sparsity, and eliminates inefficiencies like the 'attention sink' phenomenon. Additionally, gating facilitates context length extension, allowing models to generalize effectively to longer sequences without retraining. We also release the first attention-sink-free models. We believe these empirical validations will pave the way for engineering the next generation of advanced foundation models.
+
+
+================================================================================
+Node #78 | Type: section_header | Page: 9
+================================================================================
+Section: 6 Conclusion
+BBox: (70.866, 228.35810264843747, 151.21689920000003, 217.06987696422698)
+
+Text:
+Section: 6 Conclusion
+
+
+================================================================================
+Node #79 | Type: paragraph | Page: 9
+================================================================================
+Section: 6 Conclusion
+BBox: (70.408, 398.20065744843754, 526.1557838895998, 246.3344462184375)
+
+Text:
+Section: 6 Conclusion
+
+Paragraph:
+Xiao et al. (2023) formally identifies the 'attention sink' phenomenon, in which specific tokens receive large attention scores. Similarly, Darcet et al. (2023) finds in the vision transformer, some redundant tokens act as 'registers' to store attention scores. Later, Sun et al. (2024) shows that excessive attention scores are also assigned to tokens associated with massive activation values. However, our work reveals that applying gating at the output of value projection eliminates massive activations, yet attention sinks persist, indicating that massive activations are not a necessary condition for attention sinks. Similarly, Gu et al. (2024) characterizes attention sinks as non-informative 'key biases' that store redundant attention scores, arguing that softmax's inherent normalization dependency drives this behavior. Experimental attempts to modify softmax attention, such as replacing softmax with unnormalized sigmoid attention (Ramapuram et al., 2024; Gu et al., 2024), adding softmax attention gate or clip (Bondarenko et al., 2023), and modifying softmax computation (Zuhri et al., 2025) and denominator (Miller, 2023), show promise in mitigating attention sinks. Our work demonstrates that sparse gating after SDPA eliminates attention sinks in both dense (1B-parameter) and MoE (15B-parameter) models, even when trained on 3.5T tokens. Furthermore, we uncover the potential of eliminating attention sinks to benefit context-length extension.
+
+
+================================================================================
+Node #80 | Type: section_header | Page: 9
+================================================================================
+Section: 6 Conclusion > 5.2 Attention Sink
+BBox: (70.866, 418.8352086484375, 160.91794140000005, 409.4284168589638)
+
+Text:
+Section: 5.2 Attention Sink
+
+
+================================================================================
+Node #81 | Type: paragraph | Page: 9
+================================================================================
+Section: 6 Conclusion > 5.2 Attention Sink
+BBox: (70.448, 640.9646574484376, 526.150742814, 434.3034462184375)
+
+Text:
+Section: 6 Conclusion > 5.2 Attention Sink
+
+Paragraph:
+Several works on state-space models (Gu & Dao, 2023; Dao & Gu, 2024) and Linear Attention, such as FLASH(Huaet al., 2022), RetNet (Sun et al., 2023), Lightning Attention (Qin et al., 2024a;b; Li et al., 2025), and Gated Delta Networks (Yang et al., 2024b), also incorporate gating modules to controlinformation of token-mixer modules. Forgetting Transformer (Lin et al., 2025) applies gating mechanisms to the output of softmax attention, observing significant performance improvements. Although these works demonstrate the effectiveness of gating, a comprehensive understanding of its precise mechanisms and the reasons behind its effectiveness still needs exploration. This could contribute to a broader appreciation of gating's importance beyond RNNs and facilitate designs that better leverage gating's unique advantages. For example, while Switch Heads (Csordas et al., 2024b;a), NSA (Yuan et al., 2025), and MoSA (Piękos et al., 2025) employ sigmoid-based gating (Csordas et al., 2023) for selection, further investigation into isolating gating's specific contribution could offer valuable insights. Comparisons with baselines incorporating similar gating mechanisms in standard transformers could offer a more refined perspective on the effectiveness of their proposed selection mechanisms. The work most closely related to ours is Quantizable Transformers (Bondarenko et al., 2023), which also finds that applying gating in softmax attention alleviates extreme attention concentration and outliers in hidden states in encoder models like BERT and ViT. While this work primarily leverages gating to eliminate outliers for model quantization, we provide a detailed analysis of various gating variants, uncovering their benefits through enhanced non-linearity and sparsity, as well as improved training stability. Building on these insights, we scale up gated attention models, demonstrating gating's broad applicability and impact.
+
+
+================================================================================
+Node #82 | Type: paragraph | Page: 9
+================================================================================
+Section: 6 Conclusion > 5.2 Attention Sink
+BBox: (70.478, 723.6546574484375, 525.6516763296, 648.5004462184374)
+
+Text:
+Section: 6 Conclusion > 5.2 Attention Sink
+
+Paragraph:
+Gating mechanisms have been widely adopted in neural networks. Early works such as LSTMs (Hochreiter & Schmidhuber, 1997) and GRUs (Dey & Salem, 2017) introduce gates to regulate information flow across time steps, addressing gradient vanishing/exploding issues by selectively retaining or discarding information. Highway Networks (Srivastava et al., 2015) extend this concept to feedforward networks, enabling the successful training of very deep architectures. SwiGLU (Shazeer, 2020) introduce gating mechanisms into transformer FFN layers, enhancing their expressive power and becoming a standard component in many open-source LLMs (Grattafiori et al., 2024; Yang et al., 2024a).
+
+
+================================================================================
+Node #83 | Type: section_header | Page: 9
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks
+BBox: (70.866, 744.2892086484376, 217.46565900000007, 734.8824168589639)
+
+Text:
+Section: 5.1 Gating in Neural Networks
+
+
+================================================================================
+Node #84 | Type: section_header | Page: 10
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References
+BBox: (70.866, 661.9971026484376, 130.3311648, 650.708876964227)
+
+Text:
+Section: References
+
+
+================================================================================
+Node #85 | Type: paragraph | Page: 10
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References
+BBox: (70.866, 744.1696574484375, 524.7933385639999, 679.9744462184375)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References
+
+Paragraph:
+Our work primarily focuses on analyzing the reasons and impacts of attention gating through a series of ablation studies. However, we acknowledge several limitations. The broader implications of non-linearity on the dynamics of attention and the overall training process remain under-explored. Although we observe that eliminating attention sinks improves performance in long-context extension scenarios, we do not provide a rigorous theoretical explanation for how attention sinks influence the model's ability to generalize to longer sequences.
+
+
+================================================================================
+Node #86 | Type: paragraph | Page: 13
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References
+BBox: (70.368, 132.4156574484375, 524.7995153759996, 68.22044621843747)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References
+
+Paragraph:
+We further analyze the proportion of hidden states below certain thresholds before and after gating, as shown in Fig 5. The results reveal that: (1) after gating, the sparsity in hidden states significantly increases across different thresholds. Since the mean gating scores are already small, multiplying hidden states by a small number naturally pushes some values below the threshold. Therefore, (2) we further multiply the pre-gating hidden states by the average gating score and observed that the increase in sparsity is smaller than with original gating. This suggests that sparse gating scores enhance sparsity in hidden states.
+
+
+================================================================================
+Node #87 | Type: paragraph | Page: 13
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References
+BBox: (70.866, 215.10565744843757, 524.6071574952002, 139.95144621843747)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References
+
+Paragraph:
+In this section, we analyze the impact of gating score sparsity on attention output. First, we examine the mean values of SDPA output before and after applying gating to the hidden states. Specifically, we calculated the mean absolute values of Y and Y ′ before and after G 1 at each layer, as shown in Fig. 4. We also included results from a baseline without gating for comparison. The results indicate that: (1) after gating, the mean value of hidden states decreased from 0.71 to 0.05, corresponding to the generally small gating scores; (2) the gated hidden states closely resemble the baseline, suggesting that gating might serve a similar function as attention sink in filtering out irrelevant information.
+
+
+================================================================================
+Node #88 | Type: section_header | Page: 13
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score
+BBox: (70.866, 235.7402086484375, 281.9635314, 226.3334168589638)
+
+Text:
+Section: A.2 More Discussion on Sparse Gating Score
+
+
+================================================================================
+Node #89 | Type: paragraph | Page: 13
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score
+BBox: (70.866, 337.06865744843753, 525.6507498078, 250.9554462184375)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score
+
+Paragraph:
+Looking at the results in Tab. 6, we observe an interesting trend: while increasing the number of activated kv experts (with the same expert parameter settings) appears to offer some improvement in PPL (row 4 vs. 5), the gains in overall benchmark performance are less pronounced. Notably, the best results for both benchmark scores and PPL were achieved by 'Switch v 1top1' (row 6), which, as mentioned earlier, is analogous to applying sigmoid gating directly to the output of the value layer. These findings raise an intriguing question about the primary driver of the performance improvements observed in these experiments. It suggests that the introduction of gating itself plays a significant role in the effectiveness of this approach.
+
+
+================================================================================
+Node #90 | Type: table | Page: 13
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score
+BBox: (117.14913940429688, 422.0576171875, 477.6131896972656, 349.407470703125)
+
+Text:
+Table: Caption: Table 6: Performance of different switch head methods with varying parameter additions and configurations. 'switch kv' and 'switch v' refer to introducing selective computing in key-value and value components, respectively. 'Switch kv, 8top8' means there are 8 key and value map experts, and each token select top8 experts. Notice 'Switch v, 1top1' is equivalent to v Headwise Gate in Tab. 1 row (11).
+
+Table content:
+Row 1: Method=(1) Baseline (q32, kv4), Added Param (M)=-, PPL=6.026, MMLU=58.79, GSM8k=52.92, Hellaswag=73.07, C-eval=60.26
+Row 2: Method=(2) Switch kv, 8top8, Added Param (M)=38, PPL=5.847, MMLU=59.17, GSM8k=52.54, Hellaswag=73.32, C-eval=61.01
+Row 3: Method=(3) Switch kv, 4top4, Added Param (M)=13, PPL=5.935, MMLU=58.14, GSM8k=53.27, Hellaswag=73.75, C-eval=59.67
+Row 4: Method=(4) Switch v, 4top4, Added Param (M)=13, PPL=5.820, MMLU=59.02, GSM8k=52.77, Hellaswag=73.34, C-eval=61.74
+Row 5: Method=(5) Switch v, 8top2, Added Param (M)=25, PPL=5.870, MMLU=59.10, GSM8k=53.53, Hellaswag=74.17, C-eval=62.34
+Row 6: Method=(6) Switch v, 1top1, Added Param (M)=3, PPL=5.808, MMLU=59.32, GSM8k=53.53, Hellaswag=74.38, C-eval=62.61
+
+
+================================================================================
+Node #91 | Type: caption | Page: 13
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score
+BBox: (70.557, 464.1656574484375, 526.1550626687998, 425.14198712843756)
+
+Text:
+Caption: Table 6: Performance of different switch head methods with varying parameter additions and configurations. 'switch kv' and 'switch v' refer to introducing selective computing in key-value and value components, respectively. 'Switch kv, 8top8' means there are 8 key and value map experts, and each token select top8 experts. Notice 'Switch v, 1top1' is equivalent to v Headwise Gate in Tab. 1 row (11).
+
+
+================================================================================
+Node #92 | Type: paragraph | Page: 13
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score
+BBox: (70.567, 540.8336574484375, 524.6130155040001, 476.6384462184375)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score
+
+Paragraph:
+In this section, we present detailed experiments related to Switch Heads. The Switch Head paper demonstrates that introducing sparse activation in attention-where each token selects the top-k experts from a pool of key/value/output experts via learnable sigmoid routing-enables the model to achieve comparable results to the baseline. This suggests that, within the Switch Head framework, both expert parameters and activated parameters are beneficial, with more being better under the same total parameter budget.
+
+
+================================================================================
+Node #93 | Type: section_header | Page: 13
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines
+BBox: (70.86600000000004, 561.4682086484374, 200.17058540000014, 552.0614168589638)
+
+Text:
+Section: A.1 Switch Head Baselines
+
+
+================================================================================
+Node #94 | Type: section_header | Page: 13
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments
+BBox: (70.86600000000004, 586.2361026484375, 230.81462080000003, 574.9478769642269)
+
+Text:
+Section: A Supplement Experiments
+
+
+================================================================================
+Node #95 | Type: paragraph | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments
+BBox: (70.86600000000006, 104.62165744843753, 525.6576538895999, 73.30344621843756)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments
+
+Paragraph:
+In this section, we analyze the distribution of gating scores under two additional constraints while using SDPA output gating as the baseline (row 1, elementwise/headwise): (1) enforcing the same gating score across different heads (row 2, left), and (2) restricting the minimum value of the gating scores (row 2,
+
+
+================================================================================
+Node #96 | Type: section_header | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores
+BBox: (70.86600000000006, 125.25620864843756, 235.08949840000014, 115.84941685896388)
+
+Text:
+Section: A.4 More Layerwise Gating Scores
+
+
+================================================================================
+Node #97 | Type: paragraph | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores
+BBox: (70.55700000000006, 183.00165744843753, 524.8019462519999, 140.7244462184375)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores
+
+Paragraph:
+These observations suggest that introducing sufficient sparsity within the attention mechanism may help mitigate the occurrence of massive activations. However, further investigation is needed to fully understand the interplay between sparsity, massive activations, and attention sinks, particularly in the context of scaling to deeper and larger models.
+
+
+================================================================================
+Node #98 | Type: paragraph | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores
+BBox: (70.36800000000005, 254.73265744843752, 524.6129462520003, 190.53744621843748)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores
+
+Paragraph:
+When gating is applied only at the value layer (row 3), the model exhibits massive activations similar to row 2. However, a certain degree of attention sink phenomenon persists. This indicates that massive activations are not a necessary condition for the emergence of attention sinks. When enforcing shared gating scores across different heads (row 4) or modifying the activation function of gating to suppress sparsity (row 5), the sparsity introduced by gating is reduced. In these cases, both massive activations and attention sinks become comparable to those observed in the baseline.
+
+
+================================================================================
+Node #99 | Type: paragraph | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores
+BBox: (70.58700000000006, 326.4636574484375, 526.07512668, 262.2684462184375)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores
+
+Paragraph:
+For the baseline (row 1), the output of the 6th layer's FFN contains massive activations, which are subsequently added to the residual stream, causing large activations to persist in the residuals of subsequent layers. Correspondingly, significant attention sink phenomena emerge starting from the 6th layer. After applying gating to the SDPA output (row 2), the outputs of the earlier layers in the network remain relatively small overall, with massive activations growing gradually as the layer depth increases. Notably, no significant attention sink phenomenon is observed in any layer of the network.
+
+
+================================================================================
+Node #100 | Type: paragraph | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores
+BBox: (70.86600000000006, 354.3586574484375, 524.4097784639998, 333.99944621843747)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores
+
+Paragraph:
+In this section, we compare and analyze the presence of massive activations and attention sinks (the attention score of the first token) within the model. From the results, we observe the following:
+
+
+================================================================================
+Node #101 | Type: section_header | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks
+BBox: (70.86600000000006, 374.99320864843753, 330.7603462000001, 365.58641685896384)
+
+Text:
+Section: A.3 Layerwise Massive Activations and Attention Sinks
+
+
+================================================================================
+Node #102 | Type: caption | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks
+BBox: (70.86600000000006, 423.4646574484375, 524.4114388608, 404.36598712843755)
+
+Text:
+Caption: Figure 5: Proportion of SDPA output values below threshold after gating (Left: 1e-2, Right: 1e-3). We also include sparsity measurements obtained by multiplying the average gating score with pre-gating hidden states.
+
+
+================================================================================
+Node #103 | Type: figure | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks
+BBox: (92.8611831665039, 577.2037658691406, 500.2533874511719, 430.0849304199219)
+
+Text:
+Figure: Caption: Figure 4: Mean absolute values before and after gating. The baseline and post-gating values are similar.
+
+
+================================================================================
+Node #104 | Type: caption | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks
+BBox: (91.284, 602.5286574484376, 503.99283359999976, 593.1284462184375)
+
+Text:
+Caption: Figure 4: Mean absolute values before and after gating. The baseline and post-gating values are similar.
+
+
+================================================================================
+Node #105 | Type: figure | Page: 14
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks
+BBox: (186.5825653076172, 771.4150238037109, 408.036376953125, 608.6414489746094)
+
+Text:
+Figure: Caption: Figure 4: Mean absolute values before and after gating. The baseline and post-gating values are similar.
+
+
+================================================================================
+Node #106 | Type: paragraph | Page: 15
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks
+BBox: (70.368, 700.3946574484376, 525.6553824168002, 603.3234462184375)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks
+
+Paragraph:
+We observe that both the addition of sandwich normalization (Ding et al., 2021) and gating mechanisms eliminate massive activations while improving training stability. This prompts us to explore whether simpler methods could prevent large activations within residuals. Specifically, we introduce a clipping operation to constrain the outputs of attention and FFN layers before they enter the residual connection, limiting their values to the range (-clip, clip). However, we find that regardless of whether the clip value was set to 300 or 100, the model still encounters convergence issues at a learning rate of 8e-3. This suggests that the instability in pre-norm model training is not solely due to large activations within residuals. It is likely that any layer producing large outputs can lead to stability problems, indicating the need for further investigation into the root causes of training instability.
+
+
+================================================================================
+Node #107 | Type: section_header | Page: 15
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks > A.5 Other Attempt to Stabilize Training
+BBox: (70.866, 721.0292086484375, 258.5514214000001, 711.6224168589638)
+
+Text:
+Section: A.5 Other Attempt to Stabilize Training
+
+
+================================================================================
+Node #108 | Type: paragraph | Page: 15
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks > A.5 Other Attempt to Stabilize Training
+BBox: (70.866, 767.8156574484376, 524.409778464, 736.4974462184375)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks > A.5 Other Attempt to Stabilize Training
+
+Paragraph:
+right). When enforcing shared gating scores across different heads, the gating scores for most layers increase. This indicates that different heads require different sparsity, highlighting the importance of head-specific gating mechanisms.
+
+
+================================================================================
+Node #109 | Type: caption | Page: 16
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks > A.5 Other Attempt to Stabilize Training
+BBox: (70.86600000000006, 125.25665744843752, 525.9812147967998, 76.2699871284376)
+
+Text:
+Caption: Figure 6: Comparison of massive activations and attention sink phenomena across different gating configurations. Row1(Baseline): Significant massive activations and attention sinks emerge after the 6th layer. Row 2 (SDPA Gating): Reduced activations and no attention sinks observed. Row 3 (Value Layer Gating): Similar activations to Row 2 but with residual attention sinks. Rows 4-5 (Reduced Sparsity via cross-head share and NS-sigmoid): Massive activations and attention sinks resemble the baseline.
+
+
+================================================================================
+Node #110 | Type: paragraph | Page: 16
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks > A.5 Other Attempt to Stabilize Training
+BBox: (215.46733554687503, 137.48539153593754, 229.90722394687504, 131.45150703593754)
+
+Text:
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks > A.5 Other Attempt to Stabilize Training
+
+Paragraph:
+Layer layer
+
+
+================================================================================
+Node #111 | Type: figure | Page: 16
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks > A.5 Other Attempt to Stabilize Training
+BBox: (129.5982666015625, 763.5383987426758, 465.78656005859375, 132.8189697265625)
+
+Text:
+Figure
+
+
+================================================================================
+Node #112 | Type: caption | Page: 17
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks > A.5 Other Attempt to Stabilize Training
+BBox: (101.13300000000005, 269.41865744843744, 494.14365279999976, 260.0184462184375)
+
+Text:
+Caption: Figure 7: Distribution of gating scores under different constraints for SDPA output gating variants.
+
+
+================================================================================
+Node #113 | Type: figure | Page: 17
+================================================================================
+Section: 6 Conclusion > 5.1 Gating in Neural Networks > References > A.2 More Discussion on Sparse Gating Score > A.1 Switch Head Baselines > A Supplement Experiments > A.4 More Layerwise Gating Scores > A.3 Layerwise Massive Activations and Attention Sinks > A.5 Other Attempt to Stabilize Training
+BBox: (94.57897186279297, 575.2326354980469, 501.3963623046875, 276.7889404296875)
+
+Text:
+Figure
