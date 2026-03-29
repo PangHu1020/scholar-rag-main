@@ -18,7 +18,7 @@ Upload academic papers, ask questions in natural language, get grounded answers 
 ![Milvus](https://img.shields.io/badge/Milvus-2.x-00bfa5)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-[Quick Start](#quick-start) | [Features](#features) | [Architecture](#architecture) | [API Reference](#api-reference) | [Demo](#demo)
+[Quick Start](#quick-start) | [Features](#features) | [Architecture](#architecture) | [API Reference](#api-reference)
 
 
 ## What is ScholarRAG?
@@ -32,6 +32,10 @@ ScholarRAG is an end-to-end academic paper Q&A system. It parses PDFs with full 
 - Structured PDF parsing preserving section hierarchy, tables, and captions
 - Source-level citations with paper, section, and page references
 - Multi-turn conversation with memory compression
+
+**Who is this for?**
+
+This project is beginner-friendly and well-suited for anyone looking to learn and practice the full Agentic RAG workflow -- from PDF ingestion, hybrid retrieval, to multi-agent orchestration with LangGraph. The codebase is modular, well-decoupled, and easy to follow, making it an ideal starting point for students and developers exploring RAG system design.
 
 ---
 
