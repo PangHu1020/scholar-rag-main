@@ -1,12 +1,14 @@
-<div align="center">
-</div>
 
 ---
 <!-- TODO: replace with actual diagram -->
 <p align="center">
   <img src="doc/logo.png" alt="logo" width="720">
 </p>
+
+<div align="center">
+
 # ScholarRAG
+</div>
 
 **Multi-Agent RAG System for Academic Paper Q&A**
 
@@ -134,7 +136,7 @@ All settings via `backend/.env`:
 | `EMBEDDING_MODEL` | `BAAI/bge-small-en-v1.5` | Embedding model path |
 | `RERANKER_MODEL` | `BAAI/bge-reranker-v2-m3` | Reranker model path |
 | `LLM_BASE_URL` | `http://localhost:8848/v1` | LLM endpoint (OpenAI-compatible) |
-| `LLM_MODEL` | `Qwen3.5-9B` | Model name |
+| `LLM_MODEL` | `GPT-4o-mini` | Model name |
 | `LLM_TEMPERATURE` | `0.1` | Generation temperature |
 | `TOP_K` | `5` | Retrieved documents per query |
 | `FETCH_K` | `20` | Candidates before reranking |
@@ -187,6 +189,3 @@ python eval/eval_generation.py
 ---
 
 
-## License
-
-MIT
