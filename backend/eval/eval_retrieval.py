@@ -7,6 +7,7 @@ from typing import List, Dict
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from rag.retrieval import Retriever
+from config import Config
 
 
 def calculate_metrics(retrieved_ids: List[str], relevant_ids: List[str], k: int) -> Dict:
@@ -92,19 +93,14 @@ def evaluate_retrieval(
 if __name__ == "__main__":
     from dualpath_dataset import DUALPATH_QUERIES
     
-    MILVUS_URI = "http://localhost:19530"
-    COLLECTION = "test_papers"
-    EMBEDDING_MODEL = "/mnt/zh/project/Qwen3-Embedding-0.6B"
-    RERANKER_MODEL = "/mnt/zh/project/bge-reranker-v2-m3"
-    
     retriever = Retriever(
-        embedding_model=EMBEDDING_MODEL,
-        reranker_model=RERANKER_MODEL,
-        milvus_uri=MILVUS_URI,
-        collection_name=COLLECTION,
+        embedding_model=Config.EMBEDDING_MODEL,
+        reranker_model=Config.RERANKER_MODEL,
+        milvus_uri=Config.MILVUS_URI,
+        collection_name=Config.COLLECTION_NAME,
     )
     
-    metrics = evaluate_retrieval(retriever, DUALPATH_QUERIES, k=5, fetch_k=20, verbose=True)
+    metrics = evaluate_retrieval(retriever, DUALPATH_QUERIES, k=Config.TOP_K, fetch_k=Config.FETCH_K, verbose=True)
     print(f"\n{'='*50}")
     print(f"Recall@5: {metrics['recall@k']:.2%}")
     print(f"Precision@5: {metrics['precision@k']:.2%}")

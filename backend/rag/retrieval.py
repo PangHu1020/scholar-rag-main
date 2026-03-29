@@ -1,12 +1,17 @@
 """Retrieval module: hybrid search + rerank + parent-child recall + optional HyDE."""
 
+import logging
 from typing import Optional
 from langchain_core.documents import Document
-from langchain_milvus import Milvus, BM25BuiltInFunction
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_milvus import Milvus
 from pymilvus import Function, FunctionType
-from sentence_transformers import CrossEncoder
 from .cache import RetrievalCache
+from .factory import EmbeddingService, RerankerService, MilvusStoreFactory
+
+logger = logging.getLogger(__name__)
+
+RERANK_FETCH_MULTIPLIER = 2
+DEDUP_FETCH_MULTIPLIER = 2
 
 
 class Retriever:
@@ -20,30 +25,21 @@ class Retriever:
         collection_name: str = "papers",
         llm: Optional[object] = None,
         enable_cache: bool = True,
+        child_store: Optional[Milvus] = None,
+        parent_store: Optional[Milvus] = None,
     ):
-        self.embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
-        self.reranker = CrossEncoder(reranker_model)
+        self.embeddings = EmbeddingService.get_embeddings(embedding_model)
+        self.reranker = RerankerService.get_reranker(reranker_model)
         self.milvus_uri = milvus_uri
         self.collection_name = collection_name
         self.llm = llm
         self.cache = RetrievalCache() if enable_cache else None
 
-        bm25 = BM25BuiltInFunction(input_field_names="text", output_field_names="sparse")
-        conn = {"uri": self.milvus_uri}
-
-        self._child_store = Milvus(
-            self.embeddings,
-            builtin_function=bm25,
-            vector_field=["dense", "sparse"],
-            collection_name=f"{self.collection_name}_children",
-            connection_args=conn,
+        self._child_store = child_store or MilvusStoreFactory.create_store(
+            self.embeddings, milvus_uri, collection_name, is_child=True
         )
-        self._parent_store = Milvus(
-            self.embeddings,
-            builtin_function=bm25,
-            vector_field=["dense", "sparse"],
-            collection_name=f"{self.collection_name}_parents",
-            connection_args=conn,
+        self._parent_store = parent_store or MilvusStoreFactory.create_store(
+            self.embeddings, milvus_uri, collection_name, is_child=False
         )
 
     def retrieve(
@@ -70,24 +66,27 @@ class Retriever:
         if self.cache:
             cached = self.cache.get(query, k, rerank, expand_parent)
             if cached is not None:
+                logger.debug(f"Cache hit for query: {query[:50]}...")
                 return cached
         
         search_query = self._hyde(query) if use_hyde and self.llm else query
 
         if rerank and self.reranker:
-            children = self._hybrid_search(self._child_store, search_query, fetch_k * 2, rrf_k)
+            children = self._hybrid_search(self._child_store, search_query, fetch_k * RERANK_FETCH_MULTIPLIER, rrf_k)
             if not children:
+                logger.warning(f"No results found for query: {query[:50]}...")
                 return []
             children = self._rerank(query, children, fetch_k)
         else:
             children = self._hybrid_search(self._child_store, search_query, fetch_k, rrf_k)
             if not children:
+                logger.warning(f"No results found for query: {query[:50]}...")
                 return []
 
         if expand_parent:
-            results = self._expand_to_parents(children[:k * 2])
+            results = self._expand_to_parents(children[:k * DEDUP_FETCH_MULTIPLIER])
         else:
-            results = children[:k * 2]
+            results = children[:k * DEDUP_FETCH_MULTIPLIER]
 
         seen = set()
         deduped = []
@@ -102,7 +101,13 @@ class Retriever:
         if self.cache:
             self.cache.put(query, k, rerank, expand_parent, final)
         
+        logger.info(f"Retrieved {len(final)} results for query: {query[:50]}...")
         return final
+    
+    def get_updater(self):
+        """Get IncrementalUpdater for this retriever's stores."""
+        from .incremental import IncrementalUpdater
+        return IncrementalUpdater(self._parent_store, self._child_store)
 
     def _hybrid_search(
         self, store: Milvus, query: str, k: int, rrf_k: int
@@ -138,9 +143,12 @@ class Retriever:
 
         parents = []
         for pid in parent_ids:
-            expr = f'chunk_id == "{pid}"'
-            hits = self._parent_store.similarity_search("dummy", k=1, expr=expr)
-            parents.extend(hits)
+            try:
+                expr = f'chunk_id == "{pid}"'
+                hits = self._parent_store.similarity_search("dummy", k=1, expr=expr)
+                parents.extend(hits)
+            except Exception as e:
+                logger.error(f"Failed to fetch parent {pid}: {e}")
 
         return parents if parents else children
 
