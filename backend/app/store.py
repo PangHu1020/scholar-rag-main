@@ -26,12 +26,17 @@ def _get_conn() -> sqlite3.Connection:
             file_id TEXT PRIMARY KEY,
             filename TEXT NOT NULL,
             paper_id TEXT NOT NULL,
+            content_hash TEXT NOT NULL DEFAULT '',
             size_bytes INTEGER NOT NULL DEFAULT 0,
             page_count INTEGER NOT NULL DEFAULT 0,
             chunk_count INTEGER NOT NULL DEFAULT 0,
             created_at REAL NOT NULL
         )"""
     )
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(files)").fetchall()}
+    if "content_hash" not in cols:
+        conn.execute("ALTER TABLE files ADD COLUMN content_hash TEXT NOT NULL DEFAULT ''")
+
     conn.commit()
     return conn
 
@@ -85,19 +90,20 @@ def delete_session(session_id: str) -> bool:
     return ok
 
 
-def add_file(file_id: str, filename: str, paper_id: str, size_bytes: int = 0,
-             page_count: int = 0, chunk_count: int = 0) -> dict:
+def add_file(file_id: str, filename: str, paper_id: str, content_hash: str = "",
+             size_bytes: int = 0, page_count: int = 0, chunk_count: int = 0) -> dict:
     now = time.time()
     conn = _get_conn()
     conn.execute(
-        "INSERT OR REPLACE INTO files (file_id, filename, paper_id, size_bytes, page_count, chunk_count, created_at) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (file_id, filename, paper_id, size_bytes, page_count, chunk_count, now),
+        "INSERT OR REPLACE INTO files (file_id, filename, paper_id, content_hash, size_bytes, page_count, chunk_count, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (file_id, filename, paper_id, content_hash, size_bytes, page_count, chunk_count, now),
     )
     conn.commit()
     conn.close()
     return {"file_id": file_id, "filename": filename, "paper_id": paper_id,
-            "size_bytes": size_bytes, "page_count": page_count, "chunk_count": chunk_count, "created_at": now}
+            "content_hash": content_hash, "size_bytes": size_bytes,
+            "page_count": page_count, "chunk_count": chunk_count, "created_at": now}
 
 
 def list_files() -> list[dict]:
@@ -110,6 +116,13 @@ def list_files() -> list[dict]:
 def get_file(file_id: str) -> Optional[dict]:
     conn = _get_conn()
     row = conn.execute("SELECT * FROM files WHERE file_id = ?", (file_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_file_by_hash(content_hash: str) -> Optional[dict]:
+    conn = _get_conn()
+    row = conn.execute("SELECT * FROM files WHERE content_hash = ?", (content_hash,)).fetchone()
     conn.close()
     return dict(row) if row else None
 

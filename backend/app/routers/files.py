@@ -1,6 +1,7 @@
 """File upload and management APIs."""
 
 import uuid
+import hashlib
 import logging
 from pathlib import Path
 
@@ -9,7 +10,7 @@ import aiofiles
 
 from config import Config
 from app.dependencies import get_pdf_parser, get_rag_integration, get_retriever
-from app.store import add_file, list_files, get_file, delete_file_record
+from app.store import add_file, list_files, get_file, delete_file_record, get_file_by_hash
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/files", tags=["files"])
@@ -28,14 +29,20 @@ async def upload_files(files: list[UploadFile] = File(...)):
             results.append({"filename": f.filename, "status": "error", "detail": "Only PDF files are supported"})
             continue
 
-        file_id = str(uuid.uuid4())
-        paper_id = Path(f.filename).stem
-        save_path = upload_dir / f"{file_id}.pdf"
-
         content = await f.read()
         if len(content) > max_bytes:
             results.append({"filename": f.filename, "status": "error", "detail": f"File exceeds {Config.MAX_UPLOAD_SIZE_MB}MB limit"})
             continue
+
+        content_hash = hashlib.sha256(content).hexdigest()
+        existing = get_file_by_hash(content_hash)
+        if existing:
+            results.append({"filename": f.filename, "status": "duplicate", "detail": f"Same content as '{existing['filename']}'"})
+            continue
+
+        file_id = str(uuid.uuid4())
+        paper_id = Path(f.filename).stem
+        save_path = upload_dir / f"{file_id}.pdf"
 
         async with aiofiles.open(save_path, "wb") as out:
             await out.write(content)
@@ -53,6 +60,7 @@ async def upload_files(files: list[UploadFile] = File(...)):
                 file_id=file_id,
                 filename=f.filename,
                 paper_id=paper_id,
+                content_hash=content_hash,
                 size_bytes=len(content),
                 page_count=max((n.page_num for n in nodes), default=0),
                 chunk_count=len(children),

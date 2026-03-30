@@ -57,6 +57,7 @@ async def _stream_response(graph, query: str, session_id: str) -> AsyncGenerator
                 if node_name == "prepare_synthesis":
                     synth_msgs = node_output.get("synth_messages", [])
                     final_citations = node_output.get("citations", [])
+                    logger.info(f"prepare_synthesis: {len(final_citations)} citations")
 
         llm = get_llm()
         answer_buf = ""
