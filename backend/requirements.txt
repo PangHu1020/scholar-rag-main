@@ -1,0 +1,30 @@
+# FastAPI & Server
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+sse-starlette>=2.0.0
+python-multipart>=0.0.12
+
+# LangChain & LangGraph
+langchain>=0.3.0
+langchain-openai>=0.2.0
+langchain-core>=0.3.0
+langgraph>=0.2.0
+langgraph-checkpoint-postgres>=2.0.0
+
+# Vector DB & Embeddings
+pymilvus>=2.4.0
+sentence-transformers>=3.0.0
+
+# PDF Parsing
+docling>=2.0.0
+
+# Database
+psycopg[binary,pool]>=3.2.0
+
+# Utils
+python-dotenv>=1.0.0
+pydantic>=2.9.0
+
+# Evaluation (optional)
+ragas>=0.2.0
+datasets>=3.0.0
