@@ -67,10 +67,13 @@ export default function App() {
           break;
         case 'answer':
           answer = evt.data;
-          setMessages((prev) => [
-            ...prev.filter((m) => m.role === 'user' || m.finalized),
-            { role: 'assistant', content: answer, citations: [], finalized: false },
-          ]);
+          setMessages((prev) => {
+            const last = prev[prev.length - 1];
+            if (last && last.role === 'assistant' && !last.finalized) {
+              return prev.slice(0, -1).concat({ ...last, content: answer });
+            }
+            return [...prev, { role: 'assistant', content: answer, citations: [], finalized: false }];
+          });
           break;
         case 'citations':
           citations = evt.data;

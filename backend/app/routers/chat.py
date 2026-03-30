@@ -14,14 +14,14 @@ from config import Config
 from app.dependencies import get_llm, get_retriever_tool
 from app.store import create_session, get_session, update_session
 from agent.graph import build_graph
-from agent.checkpointer import create_memory_checkpointer
+from agent.checkpointer import create_memory_checkpointer, create_postgres_checkpointer
 from rag.citation import CitationExtractor
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["chat"])
 
 _checkpointer = create_memory_checkpointer()
-
+# _checkpointer = create_postgres_checkpointer()
 
 class ChatRequest(BaseModel):
     query: str
@@ -40,34 +40,49 @@ def _build_graph():
 
 async def _stream_response(graph, query: str, session_id: str) -> AsyncGenerator[str, None]:
     config = {"configurable": {"thread_id": session_id}}
+    graph_input = {
+        "query": query,
+        "messages": [],
+        "summary": "",
+        "documents": [],
+        "sub_queries": [],
+        "sub_answers": [],
+        "answer": "",
+        "citations": [],
+        "synth_messages": [],
+    }
 
     yield json.dumps({"type": "session_id", "data": session_id})
-
     yield json.dumps({"type": "status", "data": "analyzing"})
 
     try:
-        result = await graph.ainvoke(
-            {
-                "query": query,
-                "messages": [],
-                "summary": "",
-                "documents": [],
-                "sub_queries": [],
-                "sub_answers": [],
-                "answer": "",
-                "citations": [],
-            },
-            config=config,
-        )
+        synth_msgs = []
+        final_citations = []
 
-        sub_queries = result.get("sub_queries", [])
-        yield json.dumps({"type": "sub_queries", "data": sub_queries})
+        async for chunk in graph.astream(graph_input, config=config, stream_mode="updates"):
+            for node_name, node_output in chunk.items():
+                if node_name == "analyze":
+                    sq = node_output.get("sub_queries", [])
+                    if sq:
+                        yield json.dumps({"type": "sub_queries", "data": sq})
+                        yield json.dumps({"type": "status", "data": "searching"})
 
-        answer = result.get("answer", "")
-        yield json.dumps({"type": "answer", "data": answer})
+                if node_name == "prepare_synthesis":
+                    synth_msgs = node_output.get("synth_messages", [])
+                    final_citations = node_output.get("citations", [])
 
-        citations = result.get("citations", [])
-        yield json.dumps({"type": "citations", "data": citations})
+        llm = get_llm()
+        answer_buf = ""
+        if synth_msgs:
+            async for token in llm.astream(synth_msgs):
+                if token.content:
+                    answer_buf += token.content
+                    yield json.dumps({"type": "answer", "data": answer_buf})
+
+        if not answer_buf:
+            yield json.dumps({"type": "answer", "data": ""})
+
+        yield json.dumps({"type": "citations", "data": final_citations})
 
         title_hint = query[:50] + ("…" if len(query) > 50 else "")
         session = get_session(session_id)

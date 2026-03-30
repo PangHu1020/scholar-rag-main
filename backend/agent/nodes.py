@@ -56,7 +56,7 @@ def _remap_citations(answer: str, offset: int) -> str:
 
 # --------------- Top-level agent nodes ---------------
 
-def analyze_query(state: AgentState, llm: BaseChatModel) -> dict:
+async def analyze_query(state: AgentState, llm: BaseChatModel) -> dict:
     query = state["query"]
     context_header = _build_context_header(state)
 
@@ -67,7 +67,7 @@ def analyze_query(state: AgentState, llm: BaseChatModel) -> dict:
 
     structured_llm = llm.with_structured_output(QueryAnalysis)
     try:
-        result: QueryAnalysis = structured_llm.invoke(msgs)
+        result: QueryAnalysis = await structured_llm.ainvoke(msgs)
         sub_queries = result.sub_queries
     except Exception:
         sub_queries = [query]
@@ -79,8 +79,7 @@ def analyze_query(state: AgentState, llm: BaseChatModel) -> dict:
     return {"sub_queries": sub_queries}
 
 
-def synthesize(state: AgentState, llm: BaseChatModel) -> dict:
-    query = state["query"]
+def prepare_synthesis(state: AgentState) -> dict:
     sub_answers = state.get("sub_answers", [])
     context_header = _build_context_header(state)
 
@@ -99,18 +98,17 @@ def synthesize(state: AgentState, llm: BaseChatModel) -> dict:
     system_content = SYNTHESIZER.format(context=sub_context)
     if context_header:
         system_content += f"\n\n# Conversation Context\n{context_header}"
-    msgs = [SystemMessage(content=system_content), HumanMessage(content=f"Original question: {query}")]
-
-    resp = llm.invoke(msgs)
 
     return {
-        "answer": resp.content,
+        "synth_messages": [
+            SystemMessage(content=system_content),
+            HumanMessage(content=f"Original question: {state['query']}"),
+        ],
         "citations": all_citations,
-        "messages": [HumanMessage(content=query), resp],
     }
 
 
-def summarize_conversation(state: AgentState, llm: BaseChatModel) -> dict:
+async def summarize_conversation(state: AgentState, llm: BaseChatModel) -> dict:
     messages = state.get("messages", [])
     existing_summary = state.get("summary", "")
 
@@ -136,7 +134,7 @@ def summarize_conversation(state: AgentState, llm: BaseChatModel) -> dict:
 
     history = "\n".join(lines)
 
-    resp = llm.invoke([
+    resp = await llm.ainvoke([
         SystemMessage(content=SUMMARIZER.format(history=history)),
         HumanMessage(content="Summarize the above conversation."),
     ])
@@ -149,7 +147,7 @@ def summarize_conversation(state: AgentState, llm: BaseChatModel) -> dict:
 
 # --------------- Sub-agent nodes ---------------
 
-def retrieve(state: SubAgentState, retriever, citation_extractor) -> dict:
+async def retrieve(state: SubAgentState, retriever, citation_extractor) -> dict:
     query = state["query"]
 
     docs: list[Document] = retriever.invoke(query)
@@ -168,7 +166,7 @@ def retrieve(state: SubAgentState, retriever, citation_extractor) -> dict:
     return {"documents": documents, "citations": citations}
 
 
-def generate(state: SubAgentState, llm: BaseChatModel) -> dict:
+async def generate(state: SubAgentState, llm: BaseChatModel) -> dict:
     query = state["query"]
     documents = state.get("documents", [])
 
@@ -177,7 +175,7 @@ def generate(state: SubAgentState, llm: BaseChatModel) -> dict:
 
     context = "\n\n".join(f"[{i}] {d}" for i, d in enumerate(documents, 1))
 
-    resp = llm.invoke([
+    resp = await llm.ainvoke([
         SystemMessage(content=GENERATOR),
         HumanMessage(content=f"Context:\n{context}\n\nQuestion: {query}"),
     ])
@@ -185,7 +183,7 @@ def generate(state: SubAgentState, llm: BaseChatModel) -> dict:
     return {"answer": resp.content}
 
 
-def reflect(state: SubAgentState, llm: BaseChatModel) -> dict:
+async def reflect(state: SubAgentState, llm: BaseChatModel) -> dict:
     query = state["query"]
     answer = state.get("answer", "")
     documents = state.get("documents", [])
@@ -196,7 +194,7 @@ def reflect(state: SubAgentState, llm: BaseChatModel) -> dict:
 
     structured_llm = llm.with_structured_output(ReflectionResult)
     try:
-        result: ReflectionResult = structured_llm.invoke([
+        result: ReflectionResult = await structured_llm.ainvoke([
             SystemMessage(content=REFLECTOR),
             HumanMessage(content=f"Question: {query}\nAnswer: {answer}"),
         ])

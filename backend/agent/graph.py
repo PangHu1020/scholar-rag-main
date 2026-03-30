@@ -10,7 +10,7 @@ from langgraph.types import Send
 from .states import AgentState, SubAgentState, SubAnswer
 from .nodes import (
     analyze_query,
-    synthesize,
+    prepare_synthesis,
     summarize_conversation,
     retrieve,
     generate,
@@ -38,14 +38,14 @@ def _build_sub_agent_graph(
 ) -> StateGraph:
     sg = StateGraph(SubAgentState)
 
-    def retrieve_node(state: SubAgentState) -> dict:
-        return retrieve(state, retriever=retriever, citation_extractor=citation_extractor)
+    async def retrieve_node(state: SubAgentState) -> dict:
+        return await retrieve(state, retriever=retriever, citation_extractor=citation_extractor)
 
-    def generate_node(state: SubAgentState) -> dict:
-        return generate(state, llm=llm)
+    async def generate_node(state: SubAgentState) -> dict:
+        return await generate(state, llm=llm)
 
-    def reflect_node(state: SubAgentState) -> dict:
-        return reflect(state, llm=llm)
+    async def reflect_node(state: SubAgentState) -> dict:
+        return await reflect(state, llm=llm)
 
     def retry_router(state: SubAgentState) -> str:
         return should_retry(state, max_retries=max_retries)
@@ -79,7 +79,7 @@ def build_graph(
     def dispatch(state: AgentState):
         return [Send("sub_agent", {"query": q}) for q in state["sub_queries"]]
 
-    def sub_agent_node(state: dict) -> dict:
+    async def sub_agent_node(state: dict) -> dict:
         sub_input = {
             "query": state["query"],
             "documents": [],
@@ -89,29 +89,26 @@ def build_graph(
             "retry_queries": [],
             "retries": 0,
         }
-        result = sub_graph.invoke(sub_input)
+        result = await sub_graph.ainvoke(sub_input)
         return _collect_sub_answer(result)
 
-    def summarize_node(state: AgentState) -> dict:
-        return summarize_conversation(state, llm=llm)
+    async def summarize_node(state: AgentState) -> dict:
+        return await summarize_conversation(state, llm=llm)
 
-    def analyze_node(state: AgentState) -> dict:
-        return analyze_query(state, llm=llm)
-
-    def synthesize_node(state: AgentState) -> dict:
-        return synthesize(state, llm=llm)
+    async def analyze_node(state: AgentState) -> dict:
+        return await analyze_query(state, llm=llm)
 
     graph = StateGraph(AgentState)
 
     graph.add_node("summarize", summarize_node)
     graph.add_node("analyze", analyze_node)
     graph.add_node("sub_agent", sub_agent_node)
-    graph.add_node("synthesize", synthesize_node)
+    graph.add_node("prepare_synthesis", prepare_synthesis)
 
     graph.add_edge(START, "summarize")
     graph.add_edge("summarize", "analyze")
     graph.add_conditional_edges("analyze", dispatch, ["sub_agent"])
-    graph.add_edge("sub_agent", "synthesize")
-    graph.add_edge("synthesize", END)
+    graph.add_edge("sub_agent", "prepare_synthesis")
+    graph.add_edge("prepare_synthesis", END)
 
     return graph.compile(checkpointer=checkpointer)

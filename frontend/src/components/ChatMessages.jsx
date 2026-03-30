@@ -80,7 +80,7 @@ export default function ChatMessages({ messages, loading }) {
         {messages.map((m, i) => (
           <MessageBubble key={i} role={m.role} content={m.content} citations={m.citations} />
         ))}
-        {loading && (
+        {loading && !messages.some((m) => m.role === 'assistant' && !m.finalized) && (
           <div className="flex gap-4">
             <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
               <Bot size={15} className="text-gray-500" />

@@ -43,6 +43,7 @@ class AgentState(TypedDict):
     sub_answers: Annotated[list[SubAnswer], merge_sub_answers]
     answer: str
     citations: Annotated[list[dict], merge_citations]
+    synth_messages: list[AnyMessage]
 
 
 class SubAgentState(TypedDict):

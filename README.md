@@ -8,7 +8,7 @@
 <div align="center">
 
 # ScholarRAG
-</div>
+
 
 **Multi-Agent RAG System for Academic Paper Q&A**
 
@@ -21,7 +21,7 @@ Upload academic papers, ask questions in natural language, get grounded answers 
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 [Quick Start](#quick-start) | [Features](#features) | [Architecture](#architecture) | [API Reference](#api-reference)
-
+</div>
 
 ## What is ScholarRAG?
 
