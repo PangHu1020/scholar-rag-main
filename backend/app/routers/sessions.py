@@ -46,7 +46,8 @@ async def get_history(session_id: str):
         if isinstance(msg, HumanMessage):
             messages.append({"role": "user", "content": msg.content})
         else:
-            messages.append({"role": "assistant", "content": msg.content})
+            citations = msg.additional_kwargs.get("citations", [])
+            messages.append({"role": "assistant", "content": msg.content, "citations": citations})
 
     return {"session_id": session_id, "messages": messages}
 

@@ -73,7 +73,7 @@ async def _stream_response(graph, query: str, session_id: str) -> AsyncGenerator
         await graph.aupdate_state(config, {
             "messages": [
                 HumanMessage(content=query),
-                AIMessage(content=answer_buf),
+                AIMessage(content=answer_buf, additional_kwargs={"citations": final_citations}),
             ],
             "answer": answer_buf,
         })

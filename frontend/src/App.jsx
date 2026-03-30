@@ -31,7 +31,11 @@ export default function App() {
     setPanel(null);
     try {
       const data = await fetchHistory(id);
-      setMessages(data.messages || []);
+      setMessages((data.messages || []).map((m) => ({
+        ...m,
+        citations: m.citations || [],
+        finalized: true,
+      })));
     } catch {
       setMessages([]);
     }
