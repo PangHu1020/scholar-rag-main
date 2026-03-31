@@ -22,7 +22,6 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-/data
 
 # Environment
 .env
@@ -39,6 +38,7 @@ data/*
 pdf/
 *.db
 *.csv
+data/*
 
 # Testing
 .pytest_cache/
