@@ -24,6 +24,8 @@ Upload academic papers, ask questions in natural language, get grounded answers 
 
 ## What is ScholarRAG?
 
+<video src="./resource/ScholarRAG.mp4" controls></video>
+
 ScholarRAG is an end-to-end academic paper Q&A system. It parses PDFs with full structural awareness (sections, tables, figures), retrieves relevant passages via hybrid search, and generates cited answers through a multi-agent pipeline -- all accessible through a clean chat interface.
 
 **Key highlights:**
@@ -41,6 +43,32 @@ ScholarRAG is an end-to-end academic paper Q&A system. It parses PDFs with full 
 ## Who is this for?
 
 This project is **beginner-friendly** and well-suited for anyone looking to learn and practice the full Agentic RAG workflow -- from PDF ingestion, hybrid retrieval, to multi-agent orchestration with LangGraph. The codebase is modular, well-decoupled, and easy to follow, making it an ideal starting point for students and developers exploring RAG system design.
+
+---
+
+## Contents
+- [🗞️ Features](#️-features)
+- [📽️ Architecture](#️-architecture)
+- [📁 Project Structure](#-license)
+- [📖 Quick Start](#-quick-start)
+- [🔗 Configuration](#-configuration)
+- [🪩 API Reference](#-api-reference)
+- [📊 Evaluation](#-evaluation)
+- [🗝️ Tech Stack](#️-tech-stack)
+  - [LLM Orchestration Layer]()
+  - [Vector Database]()
+  - [PDF Parsing]()
+  - [Reranking]()
+  - [VLM]()
+  - [Backend]()
+  - [State Persistence]()
+  - [Frontend]()
+  - [Evaluation System]()
+  - [DevOps and Deployment]()
+- [⚠️ Security Notice](#️-security-notice)
+- [📝 License](#-license)
+- [🎉 Key Contributors](#-key-contributors)
+- [🎖️ Star History](#️-star-history)
 
 ---
 
@@ -79,7 +107,7 @@ This project is **beginner-friendly** and well-suited for anyone looking to lear
 
 ## 📁 Project Structure
 
-```
+```yaml
 backend/
   app/            FastAPI application (routers, dependencies, session store)
   agent/          LangGraph multi-agent (graph, nodes, states, prompts)
@@ -390,10 +418,23 @@ VLM descriptions are appended to the document context with a `[Figure Analysis]`
 
 ---
 
+## ⚠️ Security Notice
+
+
+
+
+---
+
+## 📝 License
+
+This project is open source and available under the [MIT License](./LICENSE).
+
+---
+
 ## 🎉 Key Contributors
 
-- [PangHu1020*](https://github.com/PangHu1020)
-- [curme-miller](https://github.com/curme-miller)
+- [PangHu1020 🐯](https://github.com/PangHu1020)
+- [curme-miller 🐮](https://github.com/curme-miller)
 
 ---
 
