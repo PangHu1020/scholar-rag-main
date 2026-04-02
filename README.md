@@ -1,6 +1,6 @@
 
 ---
-<!-- TODO: replace with actual diagram -->
+
 <p align="center">
   <img src="doc/logo.png" alt="logo" width="720">
 </p>
@@ -451,8 +451,28 @@ VLM descriptions are appended to the document context with a `[Figure Analysis]`
 
 ## ⚠️ Security Notice
 
+ScholarRAG is designed as a **research and learning tool** and is intended to run in **trusted local or internal network environments**. It does not include production-grade security hardening out of the box. Please review the following before deployment:
 
+### API & Authentication
 
+- **No built-in authentication or authorization.** All API endpoints (chat, file upload, session history, collection management) are publicly accessible to anyone who can reach the server.
+- **Session IDs are the only access boundary.** Anyone with a valid session ID can read its full conversation history or delete it.
+- **Destructive endpoints are unprotected.** `DELETE /api/collection` will wipe the entire vector database without any confirmation or credential check.
+
+### Credentials & Secrets
+
+- **API keys and database credentials** (`LLM_API_KEY`, `VLM_API_KEY`, `POSTGRES_URI`) are stored in plaintext `.env` files. Never commit `.env` to version control.
+- **Default credentials** in `.env.example` and `docker-compose.yml` (e.g., `postgres:postgres`) must be changed before any non-local deployment.
+- There is **no secret rotation mechanism** -- rotate keys and passwords manually on a regular basis.
+
+### Network & Transport
+
+- **All services communicate over plain HTTP** by default (FastAPI, Milvus, PostgreSQL, LLM/VLM endpoints). Configure TLS/HTTPS via a reverse proxy (e.g., Nginx) if the system is exposed beyond localhost.
+- **CORS is fully open** (`allow_origins=["*"]`). Restrict allowed origins to your frontend domain in production.
+- **Milvus and PostgreSQL** are exposed without network-level access controls by default. Use firewall rules or Docker network isolation to limit access.
+
+> [!CAUTION]
+> Do not expose ScholarRAG directly to the public internet without adding authentication, TLS, and proper access controls. It is safe for local development and trusted internal networks as-is.
 
 ---
 
