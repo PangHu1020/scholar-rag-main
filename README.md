@@ -313,15 +313,202 @@ npm run build           # production build, served by backend at /
 
 ## 📊 Evaluation
 
+ScholarRAG implements a comprehensive evaluation framework that assesses both **retrieval quality** and **generation performance** through industry-standard metrics. The evaluation system is designed to validate the end-to-end pipeline — from document retrieval to answer generation — ensuring the system produces accurate, relevant, and well-grounded responses.
+
+### Evaluation Architecture
+
+The evaluation system consists of two complementary modules located in `backend/eval/`:
+
+| Module | File | Focus |
+|---|---|---|
+| **Retrieval Evaluation** | `eval_retrieval.py` | Measures the quality of the hybrid search and reranking pipeline |
+| **Generation Evaluation** | `eval_generation.py` | Assesses end-to-end answer quality using the RAGAS framework |
+
+A `benchmark/` directory is provided for storing custom evaluation datasets. Users can prepare their own domain-specific test cases to benchmark the system against their particular use case.
+
+<details>
+  <summary>1. Retrieval Evaluation (click me)</summary>
+
+#### What Is Evaluated
+
+The retrieval evaluation module directly measures the performance of the full retrieval pipeline, including:
+
+- **Hybrid search** (BM25 sparse + dense embedding fusion via Reciprocal Rank Fusion)
+- **Cross-encoder reranking** (using `BAAI/bge-reranker-v2-m3`)
+- **Parent chunk expansion** (tracing matched child chunks back to their parent context)
+
+The evaluation runs the complete retrieval stack — not isolated components — so the results reflect real-world retrieval behavior.
+
+#### How It Works
+
+Each test case consists of a natural-language `query` paired with a set of `relevant_ids` (ground-truth chunk identifiers). The evaluation workflow is:
+
+1. Submit each query to the full retrieval pipeline (`retrieve()` with `rerank=True`, `expand_parent=True`).
+2. Collect the `chunk_id` from each retrieved document's metadata.
+3. Compare retrieved IDs against the ground-truth relevant IDs.
+4. Compute per-query metrics and aggregate across all test cases.
+
+#### Metrics
+
+| Metric | Definition | What It Tells Us |
+|---|---|---|
+| **Recall@k** | Fraction of relevant documents successfully retrieved in the top-k results | How well the system finds *all* the relevant information |
+| **Precision@k** | Fraction of the top-k retrieved documents that are actually relevant | How much noise (irrelevant content) is mixed into the results |
+| **MRR** (Mean Reciprocal Rank) | Average of `1/rank` for the first relevant result across queries | How quickly users encounter a relevant result |
+| **MAP** (Mean Average Precision) | Average precision computed at each relevant document's rank position, averaged across queries | Overall ranking quality — rewards systems that place relevant results higher |
+
+#### Running Retrieval Evaluation
+
+```bash
+cd backend
+python eval/eval_retrieval.py
+```
+
+The script prints per-query breakdowns (when `verbose=True`) and a final summary:
+
+```
+==================================================
+Recall@5:    85.00%
+Precision@5: 60.00%
+MRR:         0.8333
+MAP:         0.7500
+Queries:     5
+```
+</details>
+
+<details>
+  <summary>2. Generation Evaluation (RAGAS) (click me)</summary>
+
+### 2. Generation Evaluation (RAGAS)
+
+#### What Is Evaluated
+
+The generation evaluation measures the quality of the **final answers** produced by the multi-agent pipeline. Unlike retrieval evaluation, which only checks whether the right documents were found, generation evaluation examines whether the system can **synthesize** those documents into a correct, faithful, and relevant answer.
+
+The evaluation runs the **complete agent graph** end-to-end:
+
+```
+Query → Summarize → Classify → Analyze → [Sub-agents (retrieve → generate → reflect)] → Synthesize → Answer
+```
+
+This means every component — query decomposition, parallel sub-agent retrieval, self-reflection with retry, VLM fallback, and citation-aware synthesis — is exercised during evaluation.
+
+#### How It Works
+
+The evaluation uses the [RAGAS](https://docs.ragas.io/) (Retrieval Augmented Generation Assessment) framework, which is the de facto standard for evaluating RAG systems. The workflow is:
+
+1. **Run the agent**: Each evaluation query is submitted to the full LangGraph agent. The system decomposes the query, dispatches sub-agents, retrieves documents, generates sub-answers, reflects on sufficiency, and synthesizes a final response.
+
+2. **Collect outputs**: For each query, the evaluator collects:
+   - The generated `answer` (final synthesized response)
+   - The `retrieved_contexts` (sub-agent answers that served as intermediate evidence)
+   - The `reference` answer (human-written ground truth)
+
+3. **Score with RAGAS**: Each sample is packaged into a `SingleTurnSample` and evaluated against four metrics using an LLM-as-judge approach (`LangchainLLMWrapper`) and embedding similarity (`LangchainEmbeddingsWrapper`).
+
+4. **Output results**: Per-query scores and aggregate statistics (mean, min, max) are printed and saved to `ragas_results.csv`.
+
+#### Metrics
+
+| Metric | Definition | What It Tells Us |
+|---|---|---|
+| **Faithfulness** | Whether the generated answer is grounded in (supported by) the retrieved contexts | Detects hallucination — high faithfulness means the system does not fabricate information beyond what the sources provide |
+| **Answer Relevancy** | Whether the generated answer actually addresses the user's question | Measures topical alignment — a relevant answer directly responds to what was asked, rather than discussing tangential content |
+| **Context Precision** | Whether the retrieved contexts are relevant to the query | Evaluates retrieval quality from the generation perspective — high precision means the generator receives useful, on-topic inputs rather than noise |
+| **Factual Correctness** | Whether the generated answer is factually consistent with the reference answer | Validates accuracy — compares system output against human-curated ground truth to ensure key facts are correctly stated |
+
+#### Evaluation Dataset
+
+The built-in evaluation uses a set of curated test cases targeting a specific academic paper (DualPath — an LLM inference framework). Each case includes a natural-language question and a human-written reference answer:
+
+| # | Query | Focus Area |
+|---|---|---|
+| 1 | "What is DualPath and what problem does it solve?" | High-level understanding |
+| 2 | "How does DualPath improve LLM inference throughput?" | Technical mechanism |
+| 3 | "What is the dual-path KV-Cache loading mechanism?" | Core architecture detail |
+| 4 | "What are the experimental results of DualPath on DeepSeek 660B?" | Quantitative results |
+| 5 | "How does the DualPath scheduler balance load across prefill and decode engines?" | System design |
+
+These queries are designed to cover a range of question types — from broad conceptual questions to specific numerical results — mirroring the diversity of questions that real users ask about academic papers.
+
+#### Running Generation Evaluation
+
+```bash
+cd backend
+python eval/eval_generation.py
+```
+
+The script outputs a detailed report:
+
+```
+======================================================================
+  RAGAS Evaluation Results
+======================================================================
+  faithfulness                    avg=0.8500  min=0.7000  max=1.0000
+  answer_relevancy                avg=0.9200  min=0.8500  max=0.9800
+  context_precision               avg=0.7800  min=0.6000  max=0.9500
+  factual_correctness             avg=0.8100  min=0.7200  max=0.9000
+
+  Samples evaluated: 5
+======================================================================
+
+  Detailed results saved to: backend/eval/ragas_results.csv
+```
+
+</details>
+
+<details>
+  <summary>3. Significance of the Evaluation (click me)</summary>
+
+#### Why Both Retrieval and Generation Evaluation Matter
+
+RAG systems have two critical failure modes:
+
+1. **Retrieval failure**: The system retrieves wrong or insufficient documents → even a perfect generator cannot produce a good answer from bad inputs.
+2. **Generation failure**: The system retrieves good documents but the generator hallucinates, misinterprets, or ignores them → the answer is unfaithful or inaccurate despite having the right evidence.
+
+By evaluating **both** retrieval (Recall, Precision, MRR, MAP) and generation (Faithfulness, Relevancy, Context Precision, Factual Correctness), ScholarRAG can diagnose exactly where quality issues originate. For example:
+
+- **High retrieval recall but low faithfulness** → The generator is hallucinating; improve prompts or add stronger reflection.
+- **Low retrieval recall but high faithfulness** → The retriever is missing relevant content; tune chunking, embedding model, or reranking.
+- **Low context precision** → Too much noise in retrieved results; adjust `FETCH_K`, `TOP_K`, or reranker threshold.
+- **Low factual correctness** → The answer contradicts known facts; improve the synthesis prompt or increase `MAX_RETRIES` for reflection.
+
+#### Validating the Multi-Agent Architecture
+
+ScholarRAG's multi-agent pipeline includes several novel components — query decomposition, parallel sub-agents, self-reflection with retry, and VLM fallback. The end-to-end evaluation validates that these components work together effectively:
+
+- **Query decomposition** is validated by checking whether complex queries about multi-faceted topics receive comprehensive answers (high answer relevancy).
+- **Self-reflection** is validated by examining whether faithfulness improves — the reflection loop detects insufficient answers and triggers retries or VLM analysis.
+- **VLM integration** is validated through queries about experimental results that may require reading charts or figures.
+- **Citation-aware synthesis** is implicitly validated because the evaluator checks whether the final synthesized answer correctly represents the retrieved evidence.
+
+#### Extensibility
+
+The evaluation framework is designed to be easily extended:
+
+- **Custom datasets**: Users can create their own test cases in the `benchmark/` directory with domain-specific questions and reference answers.
+- **Additional metrics**: The RAGAS framework supports many more metrics (e.g., Context Recall, Noise Sensitivity, Response Conciseness) that can be added by simply appending to the metrics list.
+- **Configurable parameters**: Retrieval evaluation supports configurable `k` and `fetch_k`, enabling ablation studies (e.g., how does Recall@3 compare to Recall@10? What is the marginal benefit of reranking?).
+
+</details>
+
+### Quick Reference
+
 ```bash
 cd backend
 
-# Retrieval: Recall@k, Precision@k, MRR, MAP
+# Retrieval evaluation: Recall@k, Precision@k, MRR, MAP
 python eval/eval_retrieval.py
 
-# Generation: RAGAS (Faithfulness, Relevancy, Precision, Correctness)
+# Generation evaluation: RAGAS (Faithfulness, Relevancy, Precision, Correctness)
 python eval/eval_generation.py
 ```
+
+| Evaluation Type | Metrics | Output |
+|---|---|---|
+| Retrieval | Recall@k, Precision@k, MRR, MAP | Console summary |
+| Generation | Faithfulness, Answer Relevancy, Context Precision, Factual Correctness | Console + `ragas_results.csv` |
 
 ---
 
