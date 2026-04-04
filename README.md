@@ -57,9 +57,9 @@ This project is **beginner-friendly** and well-suited for anyone looking to lear
   - [Prerequisites](#prerequisites)
   - [Configuration](#configuration)
   - [Backend](#backend)
-  - [Frontend](#frontend)
+  - [Frontend](#frontend) 
   - [Use](#use)
-- [🪩 API Reference](#-api-reference)
+- [⚙️ API Reference](#-api-reference)
 - [📊 Evaluation](#-evaluation)
 - [🗝️ Tech Stack](#️-tech-stack)
   - [LLM Orchestration Layer]()
@@ -78,7 +78,7 @@ This project is **beginner-friendly** and well-suited for anyone looking to lear
 - [🎖️ Star History](#️-star-history)
 
 ---
-
+:gear:
 ## 🗞️ Features
 
 <!-- TODO: replace with actual screenshot or GIF -->
@@ -303,7 +303,7 @@ make dev                                # backend :8000 + frontend dev server :5
 
 ---
 
-## 🪩 API Reference
+## ⚙️ API Reference
 
 | Method | Endpoint | Description |
 |---|---|---|
