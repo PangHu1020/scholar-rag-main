@@ -9,7 +9,7 @@ load_dotenv()
 class Config:
     """Application configuration."""
     
-    MILVUS_URI = os.getenv("MILVUS_URI", "http://localhost:19530")
+    MILVUS_URI = os.getenv("MILVUS_URI", "./data/milvus.db")
     COLLECTION_NAME = os.getenv("COLLECTION_NAME", "papers")
     
     EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")

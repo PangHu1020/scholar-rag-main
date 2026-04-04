@@ -16,23 +16,11 @@ from rag.citation import CitationExtractor
 _retriever: Optional[Retriever] = None
 _query_type_ctx: ContextVar[str] = ContextVar("query_type", default="general")
 
-_ROUTE_CONFIG: dict[str, dict] = {
-    "experimental_result": {
-        "node_type_filter": ["table", "figure", "caption"],
-        "section_filter": None,
-    },
-    "method": {
-        "node_type_filter": None,
-        "section_filter": None,
-    },
-    "background": {
-        "node_type_filter": None,
-        "section_filter": None,
-    },
-    "general": {
-        "node_type_filter": None,
-        "section_filter": None,
-    },
+_ROUTE_CONFIG: dict[str, list[str] | None] = {
+    "experimental_result": ["experiment"],
+    "method": ["method"],
+    "background": ["background"],
+    "general": None,
 }
 
 
@@ -63,7 +51,7 @@ def paper_retrieval(query: str) -> str:
     """
     retriever = get_retriever()
     query_type = _query_type_ctx.get()
-    route = _ROUTE_CONFIG.get(query_type, _ROUTE_CONFIG["general"])
+    section_type_filter = _ROUTE_CONFIG.get(query_type)
 
     docs = retriever.retrieve(
         query=query,
@@ -73,8 +61,7 @@ def paper_retrieval(query: str) -> str:
         expand_parent=True,
         rrf_k=Config.RRF_K,
         fetch_k=Config.FETCH_K,
-        node_type_filter=route["node_type_filter"],
-        section_filter=route["section_filter"],
+        section_type_filter=section_type_filter,
     )
 
     if not docs:

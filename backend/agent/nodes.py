@@ -4,7 +4,7 @@ import re
 import logging
 
 from pydantic import BaseModel, Field
-from langchain_core.messages import SystemMessage, HumanMessage, RemoveMessage
+from langchain_core.messages import SystemMessage, HumanMessage, RemoveMessage, AIMessage
 from langchain_core.language_models import BaseChatModel
 from langchain_core.documents import Document
 
@@ -41,10 +41,10 @@ def _build_context_header(state: AgentState) -> str:
         for msg in recent:
             if isinstance(msg, HumanMessage):
                 role = "User"
-            elif isinstance(msg, SystemMessage):
-                continue
-            else:
+            elif isinstance(msg, AIMessage):
                 role = "Assistant"
+            else:
+                continue
             lines.append(f"{role}: {msg.content}")
         if lines:
             parts.append("<recent_conversation>\n" + "\n".join(lines) + "\n</recent_conversation>")
@@ -148,10 +148,10 @@ async def summarize_conversation(state: AgentState, llm: BaseChatModel) -> dict:
     for msg in to_summarize:
         if isinstance(msg, HumanMessage):
             role = "User"
-        elif isinstance(msg, SystemMessage):
-            continue
-        else:
+        elif isinstance(msg, AIMessage):
             role = "Assistant"
+        else:
+            continue
         lines.append(f"{role}: {msg.content}")
 
     if not lines:
@@ -177,19 +177,19 @@ async def retrieve(state: SubAgentState, retriever, citation_extractor) -> dict:
     query = state["query"]
     query_type = state.get("query_type", "general")
 
-    _ROUTE_CONFIG: dict[str, dict] = {
-        "experimental_result": {"node_type_filter": ["table", "figure", "caption"]},
-        "method": {"node_type_filter": None},
-        "background": {"node_type_filter": None},
-        "general": {"node_type_filter": None},
+    _ROUTE_CONFIG: dict[str, list[str] | None] = {
+        "experimental_result": ["experiment"],
+        "method": ["method"],
+        "background": ["background"],
+        "general": None,
     }
-    route = _ROUTE_CONFIG.get(query_type, _ROUTE_CONFIG["general"])
+    section_type_filter = _ROUTE_CONFIG.get(query_type)
 
-    docs: list[Document] = retriever.invoke(query, node_type_filter=route["node_type_filter"])
+    docs: list[Document] = retriever.invoke(query, section_type_filter=section_type_filter)
 
-    if not docs and route["node_type_filter"]:
-        logger.info(f"No results with filter, retrying without filter")
-        docs = retriever.invoke(query, node_type_filter=None)
+    if not docs and section_type_filter:
+        logger.info(f"No results with section filter, retrying without filter")
+        docs = retriever.invoke(query, section_type_filter=None)
 
     citations = citation_extractor.extract_all(docs) if docs else []
     documents = []

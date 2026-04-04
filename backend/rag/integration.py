@@ -6,13 +6,28 @@ import re
 from typing import Optional, Any
 from docling.document_converter import DocumentConverter
 from langchain_core.documents import Document
+from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_milvus import Milvus, BM25BuiltInFunction
 from langchain_huggingface import HuggingFaceEmbeddings
+from pydantic import BaseModel, Field
 from .models import PaperNode, NodeType
 from .node_generator import NodeContentGeneratorFactory, TableGenerator
 
 FIGURE_SAVE_DIR = Path("./data/figures")
+
+
+class SectionClassification(BaseModel):
+    classifications: list[dict[str, str]] = Field(description="List of {title, type} mappings")
+
+
+SECTION_CLASSIFIER_PROMPT = """Classify each paper section title into one category:
+- method: describes approach/model/algorithm/architecture/framework
+- experiment: presents results/evaluation/analysis/performance/ablation
+- background: introduction/related work/motivation/literature review
+- conclusion: conclusion/discussion/future work/limitations
+
+Output format: for each title, return {"title": "original title", "type": "category"}"""
 
 
 class TextCleaner:
@@ -44,10 +59,11 @@ class TextCleaner:
 class PDFParser:
     """Parse PDF documents into PaperNode structures."""
 
-    def __init__(self, figure_save_dir: Optional[Path] = None):
+    def __init__(self, figure_save_dir: Optional[Path] = None, llm=None):
         self.cleaner = TextCleaner()
         self._converter_cache = {}
         self.figure_save_dir = figure_save_dir or FIGURE_SAVE_DIR
+        self.llm = llm
 
     def parse(self, pdf_path: str, paper_id: str) -> list[PaperNode]:
         """Parse PDF file into list of PaperNodes.
@@ -112,6 +128,7 @@ class PDFParser:
         self._link_captions_to_figures_tables(nodes)
         self._link_text_references(nodes)
         self._extract_figure_images(pdf_path, doc, nodes)
+        self._classify_sections(nodes)
         
         return nodes
 
@@ -498,6 +515,42 @@ class PDFParser:
 
         fitz_doc.close()
 
+    def _classify_sections(self, nodes: list[PaperNode]):
+        """Classify section headers using LLM."""
+        if not self.llm:
+            return
+        
+        section_nodes = [n for n in nodes if n.node_type == "section_header"]
+        if not section_nodes:
+            return
+        
+        titles = [n.text.replace("Section: ", "").strip() for n in section_nodes]
+        titles_str = "\n".join(f"{i+1}. {t}" for i, t in enumerate(titles))
+        
+        try:
+            structured_llm = self.llm.with_structured_output(SectionClassification)
+            result = structured_llm.invoke([
+                SystemMessage(content=SECTION_CLASSIFIER_PROMPT),
+                HumanMessage(content=f"Section titles:\n{titles_str}")
+            ])
+            
+            title_to_type = {c["title"]: c["type"] for c in result.classifications}
+            
+            for node in section_nodes:
+                title = node.text.replace("Section: ", "").strip()
+                section_type = title_to_type.get(title, "other")
+                node.metadata["section_type"] = section_type
+            
+            for node in nodes:
+                if node.node_type != "section_header" and node.section_path:
+                    for section_node in section_nodes:
+                        section_title = section_node.text.replace("Section: ", "").strip()
+                        if section_title in node.section_path:
+                            node.metadata["section_type"] = section_node.metadata.get("section_type", "other")
+                            break
+        except Exception as e:
+            print(f"Section classification failed: {e}")
+
 
 class RAGIntegration:
     """Convert nodes to documents and store in Milvus with hybrid retrieval."""
@@ -531,6 +584,7 @@ class RAGIntegration:
                 "page_num": node.page_num,
                 "order": node.order,
                 "section_path": " > ".join(node.section_path) if node.section_path else "",
+                "section_type": node.metadata.get("section_type", "other"),
             }
             if node.bbox:
                 metadata["bbox"] = str(node.bbox)
@@ -584,25 +638,23 @@ class RAGIntegration:
         bm25 = BM25BuiltInFunction(input_field_names="text", output_field_names="sparse")
         
         try:
-            Milvus.from_documents(
-                children,
-                self.embeddings,
+            child_store = Milvus(
+                embedding_function=self.embeddings,
                 builtin_function=bm25,
                 vector_field=["dense", "sparse"],
                 collection_name=f"{self.collection_name}_children",
                 connection_args={"uri": self.milvus_uri},
-                drop_old=True,
             )
+            child_store.add_documents(children)
             
-            Milvus.from_documents(
-                parents,
-                self.embeddings,
+            parent_store = Milvus(
+                embedding_function=self.embeddings,
                 builtin_function=bm25,
                 vector_field=["dense", "sparse"],
                 collection_name=f"{self.collection_name}_parents",
                 connection_args={"uri": self.milvus_uri},
-                drop_old=True,
             )
+            parent_store.add_documents(parents)
             return True
         except Exception as e:
             print(f"Error storing in Milvus: {e}")

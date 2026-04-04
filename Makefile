@@ -1,10 +1,11 @@
-.PHONY: help install dev backend frontend build clean docker-up docker-down lint test
+.PHONY: help install dev backend frontend build start clean docker-up docker-down lint test
 
 help:
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Targets:"
 	@echo "  install       Install all dependencies"
+	@echo "  start         Build frontend and start backend (serves both)"
 	@echo "  dev           Run backend and frontend in dev mode"
 	@echo "  backend       Run backend only"
 	@echo "  frontend      Run frontend dev server"
@@ -18,6 +19,9 @@ help:
 install:
 	cd backend && pip install -r requirements.txt
 	cd frontend && npm install
+
+start: build
+	cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 backend:
 	cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload

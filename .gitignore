@@ -15,8 +15,6 @@ lib64/
 parts/
 sdist/
 var/
-MMDocIR/
-RPC-Bench/
 *.pdf
 wheels/
 *.egg-info/
@@ -33,12 +31,12 @@ wheels/
 # Data
 uploads/*
 !uploads/.gitkeep
-data/*
+data/
 !data/.gitkeep
 pdf/
 *.db
 *.csv
-data/*
+benchmark/
 
 # Testing
 .pytest_cache/

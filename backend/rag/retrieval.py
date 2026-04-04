@@ -52,7 +52,7 @@ class Retriever:
         rrf_k: int = 60,
         fetch_k: int = 20,
         node_type_filter: Optional[list[str]] = None,
-        section_filter: Optional[str] = None,
+        section_type_filter: Optional[list[str]] = None,
     ) -> list[Document]:
         """Full retrieval pipeline.
 
@@ -65,7 +65,7 @@ class Retriever:
             rrf_k: RRF constant for hybrid fusion.
             fetch_k: Number of candidates to fetch before reranking.
             node_type_filter: Restrict search to specific node types (e.g. ['table','figure']).
-            section_filter: Restrict search to sections containing this string.
+            section_type_filter: Restrict search to specific section types (e.g. ['method','experiment']).
         """
         if self.cache:
             cached = self.cache.get(query, k, rerank, expand_parent)
@@ -74,7 +74,7 @@ class Retriever:
                 return cached
         
         search_query = self._hyde(query) if use_hyde and self.llm else query
-        expr = self._build_expr(node_type_filter, section_filter)
+        expr = self._build_expr(node_type_filter, section_type_filter)
 
         if rerank and self.reranker:
             children = self._hybrid_search(self._child_store, search_query, fetch_k * RERANK_FETCH_MULTIPLIER, rrf_k, expr)
@@ -114,14 +114,15 @@ class Retriever:
         from .incremental import IncrementalUpdater
         return IncrementalUpdater(self._parent_store, self._child_store)
 
-    def _build_expr(self, node_type_filter: Optional[list[str]], section_filter: Optional[str]) -> Optional[str]:
+    def _build_expr(self, node_type_filter: Optional[list[str]], section_type_filter: Optional[list[str]]) -> Optional[str]:
         """Build Milvus filter expression from routing constraints."""
         parts = []
         if node_type_filter:
             types = " || ".join(f'node_type == "{t}"' for t in node_type_filter)
             parts.append(f"({types})")
-        if section_filter:
-            parts.append(f'section_path like "%{section_filter}%"')
+        if section_type_filter:
+            types = " || ".join(f'section_type == "{t}"' for t in section_type_filter)
+            parts.append(f"({types})")
         return " && ".join(parts) if parts else None
 
     def _hybrid_search(
