@@ -20,7 +20,7 @@ class RetrieverTool:
     def __init__(self, retriever: Retriever):
         self._retriever = retriever
 
-    def invoke(self, query: str, node_type_filter=None):
+    def invoke(self, query: str, section_type_filter=None):
         return self._retriever.retrieve(
             query=query,
             k=Config.TOP_K,
@@ -29,7 +29,7 @@ class RetrieverTool:
             expand_parent=True,
             rrf_k=Config.RRF_K,
             fetch_k=Config.FETCH_K,
-            node_type_filter=node_type_filter,
+            section_type_filter=section_type_filter,
         )
 
 
