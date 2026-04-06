@@ -9,10 +9,10 @@ from langchain_core.documents import Document
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_milvus import Milvus, BM25BuiltInFunction
-from langchain_huggingface import HuggingFaceEmbeddings
 from pydantic import BaseModel, Field
 from .models import PaperNode, NodeType
 from .node_generator import NodeContentGeneratorFactory, TableGenerator
+from .factory import EmbeddingService
 
 FIGURE_SAVE_DIR = Path("./data/figures")
 
@@ -561,7 +561,7 @@ class RAGIntegration:
         milvus_uri: str = "http://localhost:19530",
         collection_name: str = "papers"
     ):
-        self.embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
+        self.embeddings = EmbeddingService.get_embeddings(embedding_model)
         self.milvus_uri = milvus_uri
         self.collection_name = collection_name
         self.splitter = RecursiveCharacterTextSplitter(
@@ -658,6 +658,36 @@ class RAGIntegration:
             return True
         except Exception as e:
             print(f"Error storing in Milvus: {e}")
+            return False
+
+    async def store_in_milvus_async(self, parents: list[Document], children: list[Document]) -> bool:
+        """Async version of store_in_milvus using aadd_documents."""
+        if not parents or not children:
+            return False
+
+        bm25 = BM25BuiltInFunction(input_field_names="text", output_field_names="sparse")
+
+        try:
+            child_store = Milvus(
+                embedding_function=self.embeddings,
+                builtin_function=bm25,
+                vector_field=["dense", "sparse"],
+                collection_name=f"{self.collection_name}_children",
+                connection_args={"uri": self.milvus_uri},
+            )
+            await child_store.aadd_documents(children)
+
+            parent_store = Milvus(
+                embedding_function=self.embeddings,
+                builtin_function=bm25,
+                vector_field=["dense", "sparse"],
+                collection_name=f"{self.collection_name}_parents",
+                connection_args={"uri": self.milvus_uri},
+            )
+            await parent_store.aadd_documents(parents)
+            return True
+        except Exception as e:
+            print(f"Error storing in Milvus (async): {e}")
             return False
 
 

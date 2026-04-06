@@ -33,7 +33,7 @@ class Retriever:
         self.milvus_uri = milvus_uri
         self.collection_name = collection_name
         self.llm = llm
-        self.cache = RetrievalCache() if enable_cache else None
+        self.cache = RetrievalCache(self.embeddings) if enable_cache else None
 
         self._child_store = child_store or MilvusStoreFactory.create_store(
             self.embeddings, milvus_uri, collection_name, is_child=True
@@ -68,7 +68,7 @@ class Retriever:
             section_type_filter: Restrict search to specific section types (e.g. ['method','experiment']).
         """
         if self.cache:
-            cached = self.cache.get(query, k, rerank, expand_parent)
+            cached = self.cache.get(query)
             if cached is not None:
                 logger.debug(f"Cache hit for query: {query[:50]}...")
                 return cached
@@ -104,7 +104,7 @@ class Retriever:
         final = deduped[:k]
         
         if self.cache:
-            self.cache.put(query, k, rerank, expand_parent, final)
+            self.cache.put(query, final)
         
         logger.info(f"Retrieved {len(final)} results for query: {query[:50]}...")
         return final
